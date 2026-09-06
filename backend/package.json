@@ -29,6 +29,7 @@
     "pg": "^8.13.1"
   },
   "devDependencies": {
+    "@types/ioredis-mock": "^8.2.8",
     "cross-env": "^7.0.3",
     "eslint": "^9.17.0",
     "ioredis-mock": "^8.9.0",
