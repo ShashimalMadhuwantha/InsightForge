@@ -1,10 +1,5 @@
 const app = require('./app');
 const config = require('./common/config/env');
-const { notFoundHandler, errorHandler } = require('./common/middlewares/errorHandler');
-
-// Catch-all 404 & error handlers
-app.use(notFoundHandler);
-app.use(errorHandler);
 
 const PORT = config.port;
 

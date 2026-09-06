@@ -1,10 +1,5 @@
 const request = require('supertest');
 const app = require('../app');
-const { notFoundHandler, errorHandler } = require('../common/middlewares/errorHandler');
-
-// Mount error handlers for testing
-app.use(notFoundHandler);
-app.use(errorHandler);
 
 describe('Backend Skeleton & App Base Suite', () => {
   it('GET /api should return 200 and API status info', async () => {
