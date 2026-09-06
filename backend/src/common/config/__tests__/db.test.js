@@ -1,4 +1,4 @@
-const { db, checkDbHealth } = require('./db');
+const { db, checkDbHealth } = require('../db');
 
 describe('Database Connection Module', () => {
   afterAll(async () => {

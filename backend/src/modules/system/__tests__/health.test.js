@@ -1,8 +1,8 @@
 const request = require('supertest');
-const app = require('../../app');
-const dbModule = require('../../common/config/db');
-const redisModule = require('../../common/config/redis');
-const { formatUptime } = require('./health.service');
+const app = require('../../../app');
+const dbModule = require('../../../common/config/db');
+const redisModule = require('../../../common/config/redis');
+const { formatUptime } = require('../health.service');
 
 describe('Health Check Module Integration & Unit Suite', () => {
   afterEach(() => {
@@ -36,6 +36,8 @@ describe('Health Check Module Integration & Unit Suite', () => {
       expect(res.body).toHaveProperty('status', 'ok');
       expect(res.body.services.db).toBe('healthy');
       expect(res.body.services.redis).toBe('healthy');
+      expect(res.body.services.dbError).toBeUndefined();
+      expect(res.body.services.redisError).toBeUndefined();
       expect(res.body).toHaveProperty('uptimeFormatted');
     });
 

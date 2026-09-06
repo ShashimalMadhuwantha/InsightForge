@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { HealthStatusView } from './HealthStatusView';
-import { apiClient } from '../../services/apiClient';
+import { HealthStatusView } from '../HealthStatusView';
+import { apiClient } from '../../../services/apiClient';
 
 describe('HealthStatusView Component', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-const config = require('./env');
+const config = require('../env');
 
 describe('Environment Configuration Module', () => {
   it('loads valid default configurations', () => {

@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const defaultSeed = require('./seeds/01_system_defaults');
+const defaultSeed = require('../seeds/01_system_defaults');
 
 describe('Database Seeds Mechanism', () => {
-  const seedsDir = path.resolve(__dirname, 'seeds');
+  const seedsDir = path.resolve(__dirname, '../seeds');
 
   it('seeds directory exists and contains runnable seed files', () => {
     expect(fs.existsSync(seedsDir)).toBe(true);

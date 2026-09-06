@@ -1,4 +1,4 @@
-const { redis, checkRedisHealth } = require('./redis');
+const { redis, checkRedisHealth } = require('../redis');
 
 describe('Redis Configuration & Health Suite', () => {
   afterAll(async () => {

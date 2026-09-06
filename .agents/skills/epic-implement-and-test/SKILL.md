@@ -31,8 +31,8 @@ whole, before declaring the epic complete.
 
 - **Backend**: Express.js (Node.js)
 - **Frontend**: React + Vite
-- **Database**: SQL (PostgreSQL/MySQL) via the project's chosen ORM/query builder
-- **Cache/Queue**: Redis (e.g., BullMQ for background jobs)
+- **Database**: SQL (PostgreSQL/MySQL) via the project's chosen ORM/query builder (Knex.js)
+- **Cache/Queue**: Redis (e.g., BullMQ for background jobs, ioredis)
 - **Containerization**: Docker / Docker Compose
 - **Multi-tenancy**: shared schema, `tenant_id`-scoped queries
 
@@ -45,21 +45,15 @@ Testing tools to default to unless the project already specifies otherwise:
 - End-to-end (only when the epic includes user-facing flows spanning FE+BE):
   **Playwright**.
 
-## Folder Structure Conventions
+---
 
-Before placing any new file, check whether the repo already has an established
-structure — if so, follow it. If the repo is new/empty, use one of the two
-options below. **Default to Option A (feature-based)** for this project, since
-epics map cleanly to self-contained domains (data-sources, cleansing, widgets,
-insights, dashboards, rbac, billing) that each own their own routes, logic,
-and tests — this keeps an epic's code physically grouped together, which
-makes the per-epic test loop in this skill easier to run and reason about.
-Only use Option B (layer-based) if the user/repo explicitly prefers it.
+## Folder Structure & Test Organization Conventions
+
+All production code and automated tests must strictly follow the **Feature-based architecture (Option A)** with dedicated `__tests__/` subdirectories. **Never place test files loosely in the root source or feature directories.**
 
 ### Backend (Express.js)
 
-**Option A — Feature-based (recommended default)**
-```
+```text
 backend/
   src/
     modules/
@@ -68,75 +62,57 @@ backend/
         auth.controller.js
         auth.service.js
         auth.middleware.js
-        auth.test.js
-      tenants/
-      packages/
+        __tests__/
+          auth.routes.test.js
+          auth.service.test.js
       data-sources/
         data-sources.routes.js
         data-sources.controller.js
         data-sources.service.js
         data-sources.worker.js       # Redis/BullMQ background job
-        data-sources.test.js
+        __tests__/
+          data-sources.routes.test.js
+          data-sources.service.test.js
+          data-sources.worker.test.js
       cleansing/
+        __tests__/
       widgets/
+        __tests__/
       insights/
+        __tests__/
       dashboards/
+        __tests__/
       rbac/
+        __tests__/
       billing/
+        __tests__/
     common/
       middlewares/                    # tenant-scoping, auth, error handler
+        __tests__/
       utils/
+        __tests__/
       config/                         # env, db, redis clients
+        __tests__/
+          db.test.js
+          redis.test.js
+          env.test.js
     db/
       migrations/
       seeds/
+      __tests__/
+        migrations.test.js
+        seeds.test.js
+    __tests__/
+      app.test.js                     # top-level API / error handler tests
     app.js
     server.js
   Dockerfile
   package.json
 ```
-Each module owns its own routes/controller/service/tests. A task from a given
-epic (e.g., Epic 3, Data Sources) lives entirely inside `modules/data-sources/`.
-
-**Option B — Layer-based (classic MVC-style)**
-```
-backend/
-  src/
-    controllers/
-      authController.js
-      dataSourceController.js
-      ...
-    services/
-      authService.js
-      dataSourceService.js
-      ...
-    routes/
-      authRoutes.js
-      dataSourceRoutes.js
-      ...
-    models/                           # ORM models/schemas
-    middlewares/
-    workers/                          # Redis/BullMQ jobs
-    config/
-    db/
-      migrations/
-      seeds/
-    app.js
-    server.js
-  tests/
-    auth.test.js
-    dataSource.test.js
-    ...
-  Dockerfile
-  package.json
-```
-Here, a task's code is split across multiple top-level folders by layer
-instead of grouped by feature; tests live in a parallel `tests/` tree.
 
 ### Frontend (React + Vite)
 
-**Option A — Feature-based (recommended default)**
-```
+```text
 frontend/
   src/
     features/
@@ -145,23 +121,37 @@ frontend/
         SignupPage.jsx
         authApi.js
         authSlice.js (or authStore.js)
-        auth.test.jsx
+        __tests__/
+          LoginPage.test.jsx
+          SignupPage.test.jsx
       data-sources/
         DataSourceUploadPage.jsx
         DataStatusView.jsx
         dataSourcesApi.js
-        dataSources.test.jsx
+        __tests__/
+          DataSourceUploadPage.test.jsx
+          DataStatusView.test.jsx
       cleansing/
+        __tests__/
       widgets/
+        __tests__/
       insights/
+        __tests__/
       dashboards/
+        __tests__/
       rbac/
+        __tests__/
       billing/
+        __tests__/
     components/                       # shared/reusable UI (buttons, modals, tables)
+      __tests__/
     hooks/                            # shared hooks
+      __tests__/
     layouts/                          # page shells/navigation
+      __tests__/
     services/                         # shared API client (axios/fetch wrapper)
-    store/                            # global state setup (if using Redux/Zustand)
+      __tests__/
+    store/                            # global state setup
     routes/                           # route definitions/router config
     App.jsx
     main.jsx
@@ -169,49 +159,14 @@ frontend/
   vite.config.js
   package.json
 ```
-A task from a given epic (e.g., Epic 5, Widgets) lives entirely inside
-`features/widgets/`, including its own tests, colocated with the code.
 
-**Option B — Type-based (classic separation)**
-```
-frontend/
-  src/
-    pages/
-      LoginPage.jsx
-      DataSourceUploadPage.jsx
-      DashboardBuilderPage.jsx
-      ...
-    components/
-      DataStatusCard.jsx
-      WidgetConfigPanel.jsx
-      ...
-    hooks/
-    services/                         # all API calls, grouped by domain file
-      authApi.js
-      dataSourcesApi.js
-      ...
-    store/
-    routes/
-    App.jsx
-    main.jsx
-  tests/
-    pages/
-    components/
-  index.html
-  vite.config.js
-  package.json
-```
-Here, a single task's code is spread across `pages/`, `components/`, and
-`services/` rather than grouped under one feature folder; tests live in a
-parallel `tests/` tree mirroring `src/`.
+### Rules for Test Placement
+1. **Dedicated `__tests__/` Subdirectory:** Every feature module (`modules/<name>/`), shared utility (`common/<name>/`), DB directory (`db/`), and frontend feature (`features/<name>/`) MUST contain its tests inside a dedicated `__tests__/` subfolder.
+2. **Naming Convention:** Test files must match `<name>.test.js` or `<name>.test.jsx` (or `<name>.spec.js`).
+3. **No Loose Test Files:** Do not leave test files directly alongside source files in the parent folder; group them cleanly inside `__tests__/`.
+4. **Colocated vs. Isolated:** Unit and component tests stay colocated inside their module's `__tests__/` folder. End-to-end (Playwright) tests live in a root `/e2e` folder.
 
-### Rule for this skill regardless of option chosen
-- State which option (A or B, per side) is in use the first time this skill
-  runs on a fresh repo, so it stays consistent across all later epics.
-- Never mix conventions within the same side of the stack (e.g., don't put
-  some backend modules feature-based and others layer-based).
-- Tests always live next to (Option A) or mirrored against (Option B) the
-  code they test — never in a disconnected, hard-to-find location.
+---
 
 ## Required Inputs Before Starting
 
@@ -221,8 +176,9 @@ If any of these are missing, ask for them before writing code:
 2. **Location of the Epic & Task Breakdown doc** and the **SRS**, if not already
    in context — read both before starting; the epic's tasks and Definition of
    Done must come from those documents, not be invented.
-3. **Current repo state** — check what already exists (e.g., is Epic 0
-   infrastructure already in place?) before assuming a clean slate.
+3. **Current repo state** — check what already exists before assuming a clean slate.
+
+---
 
 ## Workflow
 
@@ -244,7 +200,7 @@ For each task, in the order listed in the breakdown doc:
 
 1. **Implement** the task's functionality (backend route/service, frontend
    component, migration, worker, etc. — whatever the task specifies).
-2. **Write tests** for that task specifically:
+2. **Write tests** in the module's `__tests__/` directory:
    - Backend: at least one happy-path test and one failure/edge-case test per
      new endpoint or service function (e.g., invalid input, unauthorized
      tenant, missing package entitlement).
@@ -270,9 +226,8 @@ Once every individual task's tests pass:
 2. Manually walk through the epic's **Definition of Done** line by line and
    confirm each condition is actually true in the running system (e.g., spin
    up `docker-compose`, exercise the feature end-to-end).
-3. If the Definition of Done references cross-epic dependencies (e.g., Epic 3
-   depending on Epic 1's auth), verify that integration explicitly rather than
-   assuming it works.
+3. If the Definition of Done references cross-epic dependencies, verify that
+   integration explicitly rather than assuming it works.
 
 ### Step 5 — Iterate Until Fully Complete
 - If Step 4 surfaces any gap (a missed task, a DoD condition not met, a test
@@ -288,15 +243,16 @@ When the epic is genuinely complete, report:
 - List of tasks completed, with their branch names.
 - Test summary (number of tests written, pass/fail count, coverage if
   available).
-- Explicit confirmation of each Definition of Done item, e.g.:
-  - [x] "docker-compose up boots DB, Redis, backend, frontend" — verified
-  - [x] "backend health check confirms DB & Redis reachable" — verified
+- Explicit confirmation of each Definition of Done item.
 - Anything intentionally deferred (and why), so it isn't silently dropped.
+
+---
 
 ## Hard Rules
 
 - **Never mark a task or epic "done" without a passing test run to prove it.**
   Code that "should work" is not done.
+- **Never place test files loosely outside `__tests__/` directories.**
 - **Never skip the failure/edge-case tests** for tenant isolation and package
   entitlement checks — these are the two most common sources of security and
   billing bugs in this project.
@@ -308,13 +264,3 @@ When the epic is genuinely complete, report:
   task's tests, to catch regressions early.
 - **If a task depends on an earlier epic that isn't finished/verified, stop
   and flag it** rather than building on an unverified foundation.
-
-## Example Invocation
-
-> "Use the epic-implement-and-test skill on Epic 3: Data Source Management."
-
-Expected behavior: the agent reads Epic 3's tasks (3.1–3.9) and its Definition
-of Done from the breakdown doc, implements each task on its own branch with
-tests, loops on failures, verifies the full Definition of Done against a
-running system, and reports back only when Epic 3 is fully feature-complete
-and tested.

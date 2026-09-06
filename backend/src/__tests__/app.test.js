@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('./app');
-const { notFoundHandler, errorHandler } = require('./common/middlewares/errorHandler');
+const app = require('../app');
+const { notFoundHandler, errorHandler } = require('../common/middlewares/errorHandler');
 
 // Mount error handlers for testing
 app.use(notFoundHandler);

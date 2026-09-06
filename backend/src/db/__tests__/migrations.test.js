@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const initialMigration = require('./migrations/20260906000001_initial_schema');
+const initialMigration = require('../migrations/20260906000001_initial_schema');
 
 describe('Database Migrations Pipeline', () => {
-  const migrationsDir = path.resolve(__dirname, 'migrations');
+  const migrationsDir = path.resolve(__dirname, '../migrations');
 
   it('migrations directory exists and contains timestamped migration files', () => {
     expect(fs.existsSync(migrationsDir)).toBe(true);
