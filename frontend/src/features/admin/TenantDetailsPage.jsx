@@ -3,17 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { 
   Building2, 
   ArrowLeft, 
-  Mail, 
-  Phone, 
   Users, 
   Layers, 
-  CheckCircle2, 
-  AlertOctagon, 
   ShieldAlert, 
-  FileText, 
-  Clock,
-  UserCheck,
-  Shield
+  FileText
 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import { StatusModal, PackageOverrideModal } from './TenantActionModals';
@@ -57,7 +50,9 @@ export function TenantDetailsPage() {
   if (loading) {
     return (
       <div style={{ maxWidth: '1000px', margin: '3rem auto', textAlign: 'center', color: 'var(--text-secondary)' }}>
-        Loading tenant details and telemetry...
+        <div className="pulse-glow" style={{ fontSize: '0.95rem', fontWeight: 600 }}>
+          Loading tenant details and telemetry...
+        </div>
       </div>
     );
   }
@@ -65,7 +60,7 @@ export function TenantDetailsPage() {
   if (error || !tenant) {
     return (
       <div style={{ maxWidth: '1000px', margin: '3rem auto', padding: '0 1rem' }}>
-        <div style={{ padding: '1.5rem', background: 'var(--error-bg)', color: 'var(--error)', borderRadius: 'var(--radius-md)', marginBottom: '1rem' }}>
+        <div style={{ padding: '1.5rem', background: 'var(--error-bg)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-md)', marginBottom: '1rem' }}>
           {error || 'Tenant not found.'}
         </div>
         <Link to="/admin" className="btn btn-outline">
@@ -80,17 +75,18 @@ export function TenantDetailsPage() {
       {/* Top Breadcrumb & Actions Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <Link to="/admin" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-primary)', fontSize: '0.85rem', textDecoration: 'none', marginBottom: '0.5rem' }}>
+          <Link to="/admin" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-primary)', fontSize: '0.85rem', textDecoration: 'none', marginBottom: '0.5rem', fontWeight: 650 }}>
             <ArrowLeft size={14} /> Back to Workspaces Directory
           </Link>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>{tenant.name}</h1>
-            <span className={`badge ${tenant.status === 'active' ? 'badge-success' : 'badge-error'}`}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.03em' }}>{tenant.name}</h1>
+            <span className={`status-pill ${tenant.status === 'active' ? 'active' : 'suspended'}`}>
+              <span className={`live-dot ${tenant.status === 'active' ? 'live-dot-success pulse' : 'live-dot-error'}`} />
               {tenant.status}
             </span>
           </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Tenant UUID: <code>{tenant.id}</code>
+          <p className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+            UUID: {tenant.id}
           </p>
         </div>
 
@@ -108,7 +104,7 @@ export function TenantDetailsPage() {
             onClick={() => setStatusModalOpen(true)}
             className="btn btn-outline"
             data-testid="moderate-status-btn"
-            style={{ color: tenant.status === 'active' ? 'var(--error)' : 'var(--success)' }}
+            style={{ color: tenant.status === 'active' ? 'var(--error)' : 'var(--success)', borderColor: tenant.status === 'active' ? 'var(--error-border)' : 'var(--success-border)' }}
           >
             <ShieldAlert size={16} />
             <span>{tenant.status === 'active' ? 'Suspend Tenant' : 'Reactivate Tenant'}</span>
@@ -119,98 +115,105 @@ export function TenantDetailsPage() {
       {/* Overview Cards Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         {/* Profile Card */}
-        <div className="glass-panel" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
-            <div style={{ background: 'var(--accent-gradient)', padding: '0.45rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
+        <div className="glass-panel" style={{ padding: '1.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
+            <div style={{ background: 'var(--accent-gradient)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
               <Building2 size={18} />
             </div>
-            <h3 style={{ fontSize: '1.1rem' }}>Organization Profile</h3>
+            <div>
+              <span className="section-tag">Organization</span>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 750 }}>Profile & Contact</h3>
+            </div>
           </div>
 
-          <div style={{ fontSize: '0.875rem', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
-            <div><strong>Contact Email:</strong> {tenant.contactEmail || 'Not configured'}</div>
-            <div><strong>Contact Phone:</strong> {tenant.contactPhone || 'Not configured'}</div>
-            <div><strong>Registered On:</strong> {new Date(tenant.createdAt).toLocaleString()}</div>
-            <div><strong>Last Updated:</strong> {new Date(tenant.updatedAt).toLocaleString()}</div>
+          <div style={{ fontSize: '0.875rem', lineHeight: 1.9, color: 'var(--text-secondary)' }}>
+            <div><strong style={{ color: 'var(--text-primary)' }}>Contact Email:</strong> <span className="font-mono">{tenant.contactEmail || 'Not configured'}</span></div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>Contact Phone:</strong> {tenant.contactPhone || 'Not configured'}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>Registered:</strong> <span className="tabular-nums">{new Date(tenant.createdAt).toLocaleString()}</span></div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>Last Updated:</strong> <span className="tabular-nums">{new Date(tenant.updatedAt).toLocaleString()}</span></div>
           </div>
         </div>
 
         {/* Subscription Limits Card */}
-        <div className="glass-panel" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
-            <div style={{ background: 'var(--accent-gradient)', padding: '0.45rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
+        <div className="glass-panel" style={{ padding: '1.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
+            <div style={{ background: 'var(--accent-gradient)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
               <Layers size={18} />
             </div>
-            <h3 style={{ fontSize: '1.1rem' }}>Subscription & Limits</h3>
+            <div>
+              <span className="section-tag">Entitlements</span>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 750 }}>Plan & Quotas</h3>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Tier Name:</span>
-            <span className="badge badge-info" style={{ textTransform: 'capitalize' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Current Tier:</span>
+            <span className="status-pill info" style={{ textTransform: 'uppercase', fontSize: '0.72rem' }}>
               {tenant.packageName || tenant.packageId || 'Free'}
             </span>
           </div>
 
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-            <div>&bull; Max Sub-Users: <strong>{tenant.packageLimits?.max_sub_users ?? 'N/A'}</strong></div>
-            <div>&bull; Max Data Sources: <strong>{tenant.packageLimits?.max_data_sources ?? 'N/A'}</strong></div>
-            <div>&bull; Max File Size: <strong>{tenant.packageLimits?.max_file_size_mb ?? 'N/A'} MB</strong></div>
+          <div className="tabular-nums" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+            <div>&bull; Max Sub-Users: <strong style={{ color: 'var(--text-primary)' }}>{tenant.packageLimits?.max_sub_users ?? 'N/A'}</strong></div>
+            <div>&bull; Max Data Sources: <strong style={{ color: 'var(--text-primary)' }}>{tenant.packageLimits?.max_data_sources ?? 'N/A'}</strong></div>
+            <div>&bull; Max File Upload Size: <strong style={{ color: 'var(--text-primary)' }}>{tenant.packageLimits?.max_file_size_mb ?? 'N/A'} MB</strong></div>
           </div>
         </div>
       </div>
 
       {/* Tenant Users Section */}
       <div className="glass-panel" style={{ padding: '1.75rem', marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{ background: 'rgba(6, 182, 212, 0.15)', padding: '0.45rem', borderRadius: 'var(--radius-md)', color: 'var(--accent-secondary)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ background: 'rgba(6, 182, 212, 0.12)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: 'var(--accent-secondary)' }}>
               <Users size={18} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem' }}>Registered Users ({tenant.users?.length || 0})</h3>
-              <p style={{ fontSize: '0.8rem' }}>Members affiliated with this workspace</p>
+              <span className="section-tag" style={{ color: 'var(--accent-secondary)' }}>Roster</span>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 750 }}>Affiliated Members ({tenant.users?.length || 0})</h3>
             </div>
           </div>
         </div>
 
-        <div style={{ overflowX: 'auto', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+        <div className="table-wrapper">
+          <table className="modern-table">
             <thead>
-              <tr style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>User Name</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>Email Address</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>Role</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>Status</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>Last Login</th>
+              <tr>
+                <th>Member Name</th>
+                <th>Email Address</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Last Login</th>
               </tr>
             </thead>
             <tbody>
               {tenant.users?.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                     No users registered in this tenant workspace.
                   </td>
                 </tr>
               ) : (
                 tenant.users?.map((u) => (
-                  <tr key={u.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <tr key={u.id}>
+                    <td style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
                       {u.firstName || u.lastName ? `${u.firstName || ''} ${u.lastName || ''}` : 'Tenant User'}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-secondary)' }}>
+                    <td className="font-mono" style={{ color: 'var(--text-secondary)' }}>
                       {u.email}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem' }}>
-                      <span className="badge badge-info" style={{ textTransform: 'capitalize' }}>
+                    <td>
+                      <span className="status-pill info" style={{ textTransform: 'capitalize', fontSize: '0.72rem' }}>
                         {u.role}
                       </span>
                     </td>
-                    <td style={{ padding: '0.75rem 1rem' }}>
-                      <span className={`badge ${u.status === 'active' ? 'badge-success' : 'badge-error'}`}>
+                    <td>
+                      <span className={`status-pill ${u.status === 'active' ? 'active' : 'suspended'}`}>
+                        <span className={`live-dot ${u.status === 'active' ? 'live-dot-success pulse' : 'live-dot-error'}`} />
                         {u.status}
                       </span>
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                    <td className="tabular-nums" style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                       {u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Never'}
                     </td>
                   </tr>
@@ -224,13 +227,13 @@ export function TenantDetailsPage() {
       {/* Tenant Audit Log Activity */}
       {tenant.auditLogs && tenant.auditLogs.length > 0 && (
         <div className="glass-panel" style={{ padding: '1.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-            <div style={{ background: 'var(--warning-bg)', padding: '0.45rem', borderRadius: 'var(--radius-md)', color: 'var(--warning)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
+            <div style={{ background: 'var(--warning-bg)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: 'var(--warning)' }}>
               <FileText size={18} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem' }}>Recent Administrative Interventions</h3>
-              <p style={{ fontSize: '0.8rem' }}>Audit trail for status changes and plan adjustments</p>
+              <span className="section-tag" style={{ color: 'var(--warning)' }}>Audit History</span>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 750 }}>Recent Administrative Interventions</h3>
             </div>
           </div>
 
@@ -239,7 +242,7 @@ export function TenantDetailsPage() {
               <div
                 key={log.id}
                 style={{
-                  padding: '0.85rem 1rem',
+                  padding: '1rem 1.25rem',
                   borderRadius: 'var(--radius-md)',
                   background: 'var(--bg-secondary)',
                   border: '1px solid var(--border-subtle)',
@@ -251,14 +254,14 @@ export function TenantDetailsPage() {
                 }}
               >
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
                     {log.action}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     {typeof log.details === 'object' ? JSON.stringify(log.details) : log.details}
                   </div>
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                <div className="tabular-nums" style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
                   {new Date(log.created_at).toLocaleString()}
                 </div>
               </div>

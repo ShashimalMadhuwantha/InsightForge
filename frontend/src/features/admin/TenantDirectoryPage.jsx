@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Building2, 
   Search, 
-  Filter, 
   Eye, 
   ShieldAlert, 
   RefreshCw, 
-  CheckCircle2, 
-  AlertOctagon, 
   ChevronLeft, 
   ChevronRight,
-  Shield,
   Layers
 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
@@ -72,15 +67,31 @@ export function TenantDirectoryPage() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':
-        return <span className="badge badge-success" data-testid="status-badge-active"><CheckCircle2 size={12} /> Active</span>;
+        return (
+          <span className="status-pill active" data-testid="status-badge-active">
+            <span className="live-dot live-dot-success pulse" /> Active
+          </span>
+        );
       case 'suspended':
-        return <span className="badge badge-error" data-testid="status-badge-suspended"><AlertOctagon size={12} /> Suspended</span>;
+        return (
+          <span className="status-pill suspended" data-testid="status-badge-suspended">
+            <span className="live-dot live-dot-error" /> Suspended
+          </span>
+        );
       case 'trialing':
-        return <span className="badge badge-warning">Trialing</span>;
+        return (
+          <span className="status-pill trialing">
+            <span className="live-dot live-dot-info pulse" /> Trialing
+          </span>
+        );
       case 'cancelled':
-        return <span className="badge badge-error">Cancelled</span>;
+        return (
+          <span className="status-pill error">
+            <span className="live-dot live-dot-error" /> Cancelled
+          </span>
+        );
       default:
-        return <span className="badge">{status}</span>;
+        return <span className="status-pill">{status}</span>;
     }
   };
 
@@ -89,30 +100,26 @@ export function TenantDirectoryPage() {
       {/* Header & Controls */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 700 }}>Tenant Workspaces Directory</h2>
-          <p style={{ fontSize: '0.85rem' }}>Search, monitor, and manage client tenants across the entire platform</p>
+          <span className="section-tag">Workspace Directory</span>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 750, marginTop: '0.2rem' }}>Tenant Workspaces</h2>
+          <p style={{ fontSize: '0.85rem' }}>Search, monitor, and moderate client organizations platform-wide</p>
         </div>
 
         {/* Search & Filter Bar */}
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <form onSubmit={handleSearchSubmit} style={{ position: 'relative' }}>
             <input
-              type="text"
-              placeholder="Search by name or email..."
+              type="search"
+              placeholder="Search workspace or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               data-testid="search-tenant-input"
               style={{
-                padding: '0.55rem 1rem 0.55rem 2.25rem',
-                fontSize: '0.85rem',
+                paddingLeft: '2.4rem',
                 width: '240px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--text-primary)',
               }}
             />
-            <Search size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
+            <Search size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
           </form>
 
           {/* Status filter */}
@@ -120,14 +127,6 @@ export function TenantDirectoryPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             data-testid="status-filter-select"
-            style={{
-              padding: '0.55rem 0.85rem',
-              fontSize: '0.85rem',
-              background: 'var(--bg-secondary)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-md)',
-              color: 'var(--text-primary)',
-            }}
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -141,14 +140,6 @@ export function TenantDirectoryPage() {
             value={packageFilter}
             onChange={(e) => setPackageFilter(e.target.value)}
             data-testid="package-filter-select"
-            style={{
-              padding: '0.55rem 0.85rem',
-              fontSize: '0.85rem',
-              background: 'var(--bg-secondary)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-md)',
-              color: 'var(--text-primary)',
-            }}
           >
             <option value="">All Tiers</option>
             <option value="free">Free</option>
@@ -169,29 +160,29 @@ export function TenantDirectoryPage() {
       </div>
 
       {error && (
-        <div style={{ padding: '0.75rem 1rem', background: 'var(--error-bg)', color: 'var(--error)', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.85rem' }}>
+        <div style={{ padding: '0.75rem 1rem', background: 'var(--error-bg)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.85rem' }}>
           {error}
         </div>
       )}
 
       {/* Tenants Table */}
-      <div style={{ overflowX: 'auto', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+      <div className="table-wrapper">
+        <table className="modern-table">
           <thead>
-            <tr style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-              <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Workspace Name</th>
-              <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Plan Tier</th>
-              <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Status</th>
-              <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Users</th>
-              <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Created Date</th>
-              <th style={{ padding: '0.85rem 1rem', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+            <tr>
+              <th>Workspace Name</th>
+              <th>Plan Tier</th>
+              <th>Status</th>
+              <th>Members</th>
+              <th>Created Date</th>
+              <th style={{ textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading && tenants.length === 0 ? (
               <tr>
                 <td colSpan={6} style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                  Loading tenant workspaces...
+                  <div className="pulse-glow">Loading tenant workspaces...</div>
                 </td>
               </tr>
             ) : tenants.length === 0 ? (
@@ -202,32 +193,26 @@ export function TenantDirectoryPage() {
               </tr>
             ) : (
               tenants.map((t) => (
-                <tr
-                  key={t.id}
-                  style={{
-                    borderBottom: '1px solid var(--border-subtle)',
-                    transition: 'background var(--transition-fast)',
-                  }}
-                >
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.contactEmail || 'No contact email'}</div>
+                <tr key={t.id}>
+                  <td>
+                    <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{t.name}</div>
+                    <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.contactEmail || 'No contact email'}</div>
                   </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <span className="badge badge-info" style={{ textTransform: 'capitalize' }}>
+                  <td>
+                    <span className="status-pill info" style={{ textTransform: 'uppercase', fontSize: '0.7rem' }}>
                       {t.packageName || t.packageId || 'Free'}
                     </span>
                   </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
+                  <td>
                     {getStatusBadge(t.status)}
                   </td>
-                  <td style={{ padding: '0.85rem 1rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                  <td className="tabular-nums" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>
                     {t.userCount}
                   </td>
-                  <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                  <td className="tabular-nums" style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
                     {new Date(t.createdAt).toLocaleDateString()}
                   </td>
-                  <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
+                  <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', gap: '0.5rem', alignItems: 'center' }}>
                       <Link
                         to={`/admin/tenants/${t.id}`}
@@ -265,7 +250,7 @@ export function TenantDirectoryPage() {
       {/* Pagination Controls */}
       {pagination.totalPages > 1 && (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem' }}>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          <span className="tabular-nums" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
             Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total workspaces)
           </span>
           <div style={{ display: 'flex', gap: '0.5rem' }}>

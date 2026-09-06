@@ -1,11 +1,13 @@
 import React from 'react';
-import { Building2, Users, CheckCircle2, AlertOctagon, Layers, FileText, Activity } from 'lucide-react';
+import { Building2, Users, CheckCircle2, AlertOctagon, Layers, FileText, TrendingUp } from 'lucide-react';
 
 export function GlobalAnalyticsOverview({ analytics, loading }) {
   if (loading && !analytics) {
     return (
       <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
-        Loading platform analytics telemetry...
+        <div className="pulse-glow" style={{ fontSize: '0.95rem', fontWeight: 600 }}>
+          Loading platform analytics telemetry...
+        </div>
       </div>
     );
   }
@@ -13,124 +15,142 @@ export function GlobalAnalyticsOverview({ analytics, loading }) {
   const { metrics = {}, tierDistribution = [] } = analytics || {};
 
   return (
-    <div>
+    <div style={{ marginBottom: '2rem' }}>
       {/* KPI Cards Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
         gap: '1.25rem',
-        marginBottom: '2rem',
+        marginBottom: '1.75rem',
       }}>
         {/* Total Tenants */}
-        <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Total Workspaces</span>
-            <div style={{ background: 'var(--accent-glow)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--accent-primary)' }}>
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="section-tag">Total Workspaces</span>
+            <div className="stat-icon-wrapper">
               <Building2 size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }} data-testid="metric-total-tenants">
+          <div className="stat-value tabular-nums" data-testid="metric-total-tenants">
             {metrics.totalTenants ?? 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            Across all subscription tiers
+          <div className="stat-meta">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-secondary)', fontWeight: 600 }}>
+              <TrendingUp size={13} /> Global
+            </span>
+            <span>across all tiers</span>
           </div>
         </div>
 
         {/* Active Tenants */}
-        <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Active Tenants</span>
-            <div style={{ background: 'var(--success-bg)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--success)' }}>
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="section-tag" style={{ color: 'var(--success)' }}>Active Workspaces</span>
+            <div className="stat-icon-wrapper" style={{ background: 'var(--success-bg)', color: 'var(--success)', borderColor: 'var(--success-border)' }}>
               <CheckCircle2 size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--success)' }} data-testid="metric-active-tenants">
+          <div className="stat-value tabular-nums" style={{ color: 'var(--success)' }} data-testid="metric-active-tenants">
             {metrics.activeTenants ?? 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            Fully operational
+          <div className="stat-meta">
+            <span className="live-dot live-dot-success pulse" />
+            <span style={{ color: 'var(--success)', fontWeight: 600 }}>Operational</span>
+            <span>100% data access</span>
           </div>
         </div>
 
         {/* Suspended Tenants */}
-        <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Suspended</span>
-            <div style={{ background: 'var(--error-bg)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--error)' }}>
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="section-tag" style={{ color: 'var(--error)' }}>Suspended</span>
+            <div className="stat-icon-wrapper" style={{ background: 'var(--error-bg)', color: 'var(--error)', borderColor: 'var(--error-border)' }}>
               <AlertOctagon size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--error)' }} data-testid="metric-suspended-tenants">
+          <div className="stat-value tabular-nums" style={{ color: 'var(--error)' }} data-testid="metric-suspended-tenants">
             {metrics.suspendedTenants ?? 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            Access restricted
+          <div className="stat-meta">
+            <span className="live-dot live-dot-error" />
+            <span style={{ color: 'var(--error)', fontWeight: 600 }}>Restricted</span>
+            <span>Sessions revoked</span>
           </div>
         </div>
 
         {/* Total Platform Users */}
-        <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Registered Users</span>
-            <div style={{ background: 'rgba(6, 182, 212, 0.15)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--accent-secondary)' }}>
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="section-tag" style={{ color: 'var(--accent-secondary)' }}>Platform Members</span>
+            <div className="stat-icon-wrapper" style={{ background: 'rgba(6, 182, 212, 0.12)', color: 'var(--accent-secondary)', borderColor: 'rgba(6, 182, 212, 0.25)' }}>
               <Users size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }} data-testid="metric-total-users">
+          <div className="stat-value tabular-nums" data-testid="metric-total-users">
             {metrics.totalUsers ?? 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            All tenant members
+          <div className="stat-meta">
+            <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Registered Accounts</span>
+            <span>across all tenants</span>
           </div>
         </div>
 
         {/* Total Audit Logs */}
-        <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Admin Interventions</span>
-            <div style={{ background: 'var(--warning-bg)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--warning)' }}>
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="section-tag" style={{ color: 'var(--warning)' }}>Audit Events</span>
+            <div className="stat-icon-wrapper" style={{ background: 'var(--warning-bg)', color: 'var(--warning)', borderColor: 'var(--warning-border)' }}>
               <FileText size={18} />
             </div>
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }} data-testid="metric-audit-logs">
+          <div className="stat-value tabular-nums" data-testid="metric-audit-logs">
             {metrics.totalAuditLogs ?? 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            Recorded audit events
+          <div className="stat-meta">
+            <span style={{ color: 'var(--warning)', fontWeight: 600 }}>Immutable Trail</span>
+            <span>recorded interventions</span>
           </div>
         </div>
       </div>
 
       {/* Subscription Tier Distribution Section */}
-      <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-          <div style={{ background: 'var(--accent-gradient)', padding: '0.45rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
-            <Layers size={18} />
+      <div className="glass-panel" style={{ padding: '1.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ background: 'var(--accent-gradient)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
+              <Layers size={18} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 750 }}>Subscription Tier Distribution</h3>
+              <p style={{ fontSize: '0.825rem' }}>Active tenant workspaces partitioned across subscription packages</p>
+            </div>
           </div>
-          <div>
-            <h3 style={{ fontSize: '1.15rem' }}>Subscription Tier Distribution</h3>
-            <p style={{ fontSize: '0.8rem' }}>Active tenant workspaces partitioned by subscription package</p>
-          </div>
+          <span className="status-pill info">
+            <span className="live-dot live-dot-info pulse" /> Live Telemetry
+          </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
           {tierDistribution.map((tier) => (
             <div
               key={tier.id}
+              className="interactive-card"
               style={{
-                padding: '1rem',
+                padding: '1.15rem',
                 borderRadius: 'var(--radius-md)',
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--border-subtle)',
+                transition: 'all var(--transition-normal)',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>{tier.name}</span>
-                <span className="badge badge-info" style={{ fontSize: '0.7rem' }}>{tier.id}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
+                <span style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>{tier.name}</span>
+                <span className="status-pill info" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem', textTransform: 'uppercase' }}>
+                  {tier.id}
+                </span>
               </div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-primary)' }}>
-                {tier.count} <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-muted)' }}>tenants</span>
+              <div className="tabular-nums" style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
+                {tier.count} <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)' }}>tenants</span>
               </div>
             </div>
           ))}
