@@ -23,20 +23,6 @@ exports.up = async function(knex) {
       table.index(['created_at'], 'idx_audit_logs_created_at');
     });
   }
-
-  // 2. Ensure system tenant exists or allow nullable tenant_id on users if needed
-  const hasSystemTenant = await knex('tenants').where('id', '00000000-0000-0000-0000-000000000000').first();
-  if (!hasSystemTenant) {
-    await knex('tenants').insert({
-      id: '00000000-0000-0000-0000-000000000000',
-      name: 'InsightForge Platform Administration',
-      package_id: 'enterprise',
-      status: 'active',
-      contact_email: 'admin@insightforge.internal',
-      created_at: knex.fn.now(),
-      updated_at: knex.fn.now(),
-    });
-  }
 };
 
 /**
@@ -45,5 +31,4 @@ exports.up = async function(knex) {
  */
 exports.down = async function(knex) {
   await knex.schema.dropTableIfExists('audit_logs');
-  await knex('tenants').where('id', '00000000-0000-0000-0000-000000000000').del();
 };
