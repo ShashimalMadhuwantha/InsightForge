@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BarChart3, Sun, Moon, LogOut, Settings, Building2, User } from 'lucide-react';
+import { BarChart3, Sun, Moon, LogOut, Settings, Building2, User, Shield } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
 import { useTheme } from '../hooks/useTheme';
 
 export function Navbar() {
-  const { tenant, isAuthenticated, logout } = useAuth();
+  const { user, tenant, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -13,6 +13,8 @@ export function Navbar() {
     await logout();
     navigate('/login');
   };
+
+  const isSuperAdmin = user?.role === 'super_admin';
 
   return (
     <header style={{
@@ -61,7 +63,19 @@ export function Navbar() {
           </button>
 
           {isAuthenticated ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              {isSuperAdmin && (
+                <Link
+                  to="/admin"
+                  className="btn btn-primary"
+                  style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  data-testid="super-admin-nav-link"
+                >
+                  <Shield size={14} />
+                  <span>Admin Portal</span>
+                </Link>
+              )}
+
               {/* Tenant Badge */}
               <div style={{
                 display: 'flex',
