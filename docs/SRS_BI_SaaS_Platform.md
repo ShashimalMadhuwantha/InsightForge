@@ -75,11 +75,11 @@ This is a new, standalone, cloud-hosted, multi-tenant SaaS product. It is not a 
 
 | Role | Description | Typical Permissions |
 |---|---|---|
-| Super Admin (Platform) | Anthropic-side/your own staff managing the SaaS itself | Manage tenants, plans, system health |
-| Tenant Owner | The business account that signs up and pays for a package | Full control within their tenant: billing, data sources, sub-users, all dashboards |
-| Tenant Admin (optional role) | Sub-user with elevated rights | Manage data sources, dashboards, other sub-users (if delegated) |
-| Sub-user / Analyst | Employee invited by tenant owner | Access only to assigned dashboards/data sources |
-| Viewer | Read-only sub-user | View assigned dashboards only, no edit rights |
+| **Super Admin (Platform Admin)** | SaaS platform operators / internal staff | Global cross-tenant monitoring, tenant lifecycle management (activate/suspend), subscription overrides, resource quota adjustments, global platform telemetry, audit log inspection |
+| **Tenant Owner** | The business account that signs up and owns the workspace | Full control within their isolated tenant: billing, data sources, sub-users, all dashboards, tenant settings |
+| **Tenant Admin** | Sub-user with delegated administrator rights | Manage data sources, dashboards, and sub-users within the tenant |
+| **Sub-user / Analyst** | Team member invited by tenant admin/owner | Build/edit assigned dashboards and data sources |
+| **Viewer** | Read-only tenant user | View assigned dashboards only, no edit or export rights |
 
 ### 2.4 Operating Environment
 
@@ -173,6 +173,30 @@ This is a new, standalone, cloud-hosted, multi-tenant SaaS product. It is not a 
   - Data retention/version history length
 - **FR-7.2**: The system shall check package entitlements on the server side before allowing any gated action.
 - **FR-7.3**: The system shall notify the user when they hit a package limit and prompt an upgrade.
+
+### 3.8 Super Admin Platform & Global Tenant Monitoring
+
+- **FR-8.1 (Super Admin Auth & Role)**: The system shall support a dedicated platform `super_admin` role with access to cross-tenant administration APIs and global dashboard views.
+- **FR-8.2 (Global Tenant Directory & Real-Time Monitoring)**: The system shall provide a centralized dashboard displaying all registered tenants with:
+  - Tenant ID, business name, slug, contact email, created date
+  - Active subscription tier & status (`active`, `suspended`, `cancelled`, `trialing`)
+  - Resource consumption metrics: total registered sub-users, total data sources connected, total rows ingested, storage consumed (MB), last active timestamp
+- **FR-8.3 (Tenant Deep-Dive & Inspection)**: The system shall allow Super Admins to drill down into any tenant to view:
+  - Detailed tenant profile & contact information
+  - List of all tenant users, roles, email verification status, and login activity
+  - Data sources inventory with file sizes, schema definitions, and ingestion health
+  - Dashboards and widget inventories
+  - Quota usage vs. package limits
+- **FR-8.4 (Tenant Moderation & Governance)**: The system shall allow Super Admins to:
+  - Suspend or reactivate tenant accounts with immediate session revocation
+  - Override a tenant's subscription package or assign custom feature quotas
+  - Trigger forced password resets or update tenant owner details
+- **FR-8.5 (Global Platform Telemetry & Analytics)**: The system shall compute and display platform-wide aggregate metrics:
+  - Total active vs. suspended tenants
+  - Subscription tier distribution (Free vs. Starter vs. Pro vs. Enterprise)
+  - Aggregate storage consumed and total data rows ingested across all tenants
+  - Platform health, queue backlog status, and error rate telemetry
+- **FR-8.6 (Super Admin Action Audit Log)**: The system shall maintain an immutable audit log recording every Super Admin operation (target tenant, action, parameters, timestamp, admin user ID, IP address, and reason).
 
 ---
 
