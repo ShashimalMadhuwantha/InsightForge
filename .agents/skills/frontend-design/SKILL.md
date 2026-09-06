@@ -1,158 +1,196 @@
 ---
-name: bi-saas-frontend-design
+name: frontend-design
 description: >
-  Use this skill whenever building or refining any user-facing screen, page,
-  component, or dashboard for the multi-tenant BI SaaS platform (Chartify).
-  Triggers include: building a new page/component, styling a dashboard or
-  widget, reviewing an existing screen for visual quality, or any task where
-  the output is something a user will look at and interact with. This skill
-  defines the design system, layout patterns, and an iterate-until-polished
-  review loop so the UI stays consistent across every epic instead of each
-  feature looking like it was designed separately.
+  Guidelines, design tokens, and UI/UX conventions for the InsightForge Multi-Tenant BI SaaS platform.
+  Use this skill whenever creating, updating, or styling frontend components, pages, charts, widgets,
+  and layouts to ensure a consistent, world-class aesthetic with full Dark Mode and Light Mode support.
 ---
 
-# Skill: Frontend Design for Chartify (BI SaaS Platform)
+# Skill: Frontend Design & Theming System
 
 ## Purpose
 
-Guided, non-technical SMB users (per the SRS) need a UI that feels clean,
-trustworthy, and effortless — not like a raw admin panel and not like a
-overwhelming enterprise BI tool. This skill ensures every screen built across
-every epic follows one consistent design system, and is not considered done
-until it has passed a visual/UX review pass — not just a functional one.
+Define the visual language, design system tokens, and UX guidelines for the **InsightForge BI SaaS platform**. Every user interface element must feel modern, premium, responsive, and seamlessly support both **Dark Mode (Midnight Slate)** and **Light Mode (Clean Porcelain)**.
 
-**Core rule: implementing a feature is not "done" until it also looks
-intentional.** A working-but-unstyled screen (default browser buttons, no
-spacing, wall-of-text tables) fails this skill's definition of done, the same
-way untested code fails the `epic-implement-and-test` skill.
+---
 
-## Design Principles
+## 🎨 Color Palette & CSS Variables
 
-1. **Clarity over density.** This is a BI tool for non-analysts — favor
-   whitespace, clear labels, and one primary action per screen over cramming
-   in every possible control.
-2. **Data is the hero.** Charts, tables, and KPI numbers should visually
-   dominate; chrome (nav, borders, buttons) should recede.
-3. **Guided, not blank.** Every empty state (no data sources yet, no
-   dashboards yet, no insights yet) must include a clear next action, not a
-   blank page or a generic "no data" message.
-4. **Consistent feedback for async work.** Uploads, cleansing jobs, and
-   insight generation are background jobs (per the architecture) — every one
-   of them needs a visible progress/loading state and a clear success/failure
-   state. Never leave the user guessing whether something is happening.
-5. **Trust through consistency.** Same spacing scale, same color meanings,
-   same component behavior everywhere — a user should never have to relearn
-   an interaction pattern between the Data Sources page and the Dashboards
-   page.
+All components, layouts, charts, and widgets **must use CSS variables** (`var(--token)`) rather than hardcoded hex codes, ensuring instant theme switching.
 
-## Design System / Tokens
+### Design Tokens (`frontend/src/index.css`)
 
-Use Tailwind CSS utility classes as the styling layer (pairs cleanly with
-React + Vite). Define these as actual Tailwind config values, not ad-hoc
-one-off styles, so every component pulls from the same source of truth.
+```css
+/* ==========================================================================
+   THEME DESIGN TOKENS: LIGHT & DARK MODES
+   ========================================================================== */
 
-**Color roles** (map to actual hex values in `tailwind.config.js`, not just
-names):
-- `brand` — primary brand color, used for primary buttons/links/active states
-- `surface` — page/card backgrounds
-- `border` — dividers, card outlines
-- `text-primary` / `text-secondary` — main copy vs. muted/help copy
-- `success` / `warning` / `danger` — status colors, used consistently for:
-  data-quality scores, package-limit warnings, job failures, permission errors
-- Chart palette — a fixed, ordered list of 6–8 colors reused across every
-  chart/widget so the same category always renders in the same color across
-  a dashboard (assign colors deterministically by category, not randomly).
+:root,
+[data-theme="dark"] {
+  /* Surface & Backgrounds */
+  --bg-primary: #090d16;
+  --bg-secondary: #0f172a;
+  --bg-tertiary: #1e293b;
+  --bg-card: rgba(15, 23, 42, 0.75);
+  --bg-card-hover: rgba(30, 41, 59, 0.85);
+  --bg-glass: rgba(15, 23, 42, 0.65);
 
-**Typography**
-- One font family, max 2 weights in regular use (regular + semibold), one
-  heavier weight reserved for page titles/KPI numbers only.
-- Fixed type scale (e.g., `text-xs` through `text-3xl`) — no arbitrary
-  one-off font sizes.
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-focus: #6366f1;
 
-**Spacing & layout**
-- 4px/8px base spacing scale (Tailwind defaults) applied consistently —
-  no arbitrary margins like `mt-[13px]`.
-- Consistent card pattern: rounded corners, subtle border or shadow, fixed
-  internal padding — used for every widget, data-source card, and settings
-  panel so the whole app feels like one system.
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 
-**Component library baseline**
-- Use a headless/unstyled base (e.g., Radix primitives via shadcn/ui) for
-  complex interactive components (dropdowns, modals, tabs, toasts) rather
-  than hand-building accessibility-sensitive components from scratch.
-- Charts: pick one charting library (e.g., Recharts) and theme it once
-  (colors, fonts, tooltip style) via a shared config/wrapper component, so no
-  individual widget hand-codes its own chart styling.
+  /* Brand Accents */
+  --accent-primary: #6366f1;
+  --accent-primary-hover: #4f46e5;
+  --accent-secondary: #06b6d4;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+  --accent-glow: 0 0 25px rgba(99, 102, 241, 0.35);
 
-## Page-Specific Guidance (maps to the Epics)
+  /* Status Colors */
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.14);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.14);
+  --error: #f43f5e;
+  --error-bg: rgba(244, 63, 94, 0.14);
+  --info: #38bdf8;
+  --info-bg: rgba(56, 189, 248, 0.14);
 
-- **Auth pages (Epic 1):** minimal, centered card layout, no dashboard chrome
-  — first impression should feel simple and fast.
-- **Data Source upload & status (Epic 3):** drag-and-drop zone with clear
-  file-type/size hints; data status view should lead with the overall quality
-  score (large, colored by severity), then progressively reveal detail
-  (missing values, duplicates, type mismatches) below.
-- **Cleansing panel (Epic 4):** side-by-side or toggleable before/after
-  preview — never apply a destructive-feeling change without a visible
-  preview and explicit confirm.
-- **Widget builder (Epic 5):** config panel on one side, live chart preview
-  on the other, updating in real time as fields are mapped — never require a
-  "Generate" click just to see a rough preview.
-- **Dashboards (Epic 7):** drag/resize grid layout; widgets should have a
-  consistent card frame regardless of chart type inside them.
-- **Sub-user/RBAC screens (Epic 8):** permissions should be shown as a clear
-  matrix or checklist (resource × access level), not a wall of raw checkboxes
-  with no grouping.
-- **Package/billing screens (Epic 2, 9):** feature comparison as a table with
-  clear visual distinction for the plan the tenant currently has; limit-reached
-  prompts should be a friendly inline banner/modal, not a jarring error.
+  /* Chart / BI Visualization Palette */
+  --chart-1: #6366f1; /* Indigo */
+  --chart-2: #06b6d4; /* Cyan */
+  --chart-3: #10b981; /* Emerald */
+  --chart-4: #f59e0b; /* Amber */
+  --chart-5: #a855f7; /* Purple */
+  --chart-6: #f43f5e; /* Rose */
+  --chart-grid: rgba(255, 255, 255, 0.06);
 
-## Responsive & Accessibility Rules
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 14px 36px -4px rgba(0, 0, 0, 0.65), 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+}
 
-- Support desktop-first (primary BI use case) but ensure tablet width doesn't
-  break the layout; dashboard grid can reflow to single-column below a set
-  breakpoint.
-- All interactive elements must be keyboard-navigable and have visible focus
-  states (don't strip default focus outlines without replacing them).
-- Color must never be the only signal (e.g., pair a red "danger" color with
-  an icon/label too) — this matters especially for data-quality indicators
-  and permission states.
-- Maintain WCAG AA contrast minimums for text and status colors.
+[data-theme="light"] {
+  /* Surface & Backgrounds */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-hover: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.8);
 
-## Design Review Loop (iterate until polished)
+  /* Borders & Dividers */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-medium: rgba(15, 23, 42, 0.15);
+  --border-focus: #4f46e5;
 
-Treat this the same way the testing skill treats failing tests — do not stop
-at "it renders."
+  /* Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
 
-1. **Build** the screen/component using the design tokens above.
-2. **Self-review against this checklist:**
-   - [ ] Uses only design-system colors, spacing, and type scale (no one-off values)
-   - [ ] Has a defined loading state for any async action
-   - [ ] Has a defined empty state with a clear next action
-   - [ ] Has a defined error state (not just a console error)
-   - [ ] Keyboard-navigable, visible focus states present
-   - [ ] Matches the page-specific guidance above for this epic
-   - [ ] Chart colors match the fixed chart palette, consistently per category
-3. **If any box is unchecked, fix it and re-review** — don't move to the next
-   component with known gaps.
-4. Only report a screen/component as complete once every box is checked.
+  /* Brand Accents */
+  --accent-primary: #4f46e5;
+  --accent-primary-hover: #4338ca;
+  --accent-secondary: #0891b2;
+  --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #0891b2 100%);
+  --accent-glow: 0 0 25px rgba(79, 70, 229, 0.2);
 
-## Folder Placement
+  /* Status Colors */
+  --success: #059669;
+  --success-bg: rgba(5, 150, 105, 0.1);
+  --warning: #d97706;
+  --warning-bg: rgba(217, 119, 6, 0.1);
+  --error: #e11d48;
+  --error-bg: rgba(225, 29, 72, 0.1);
+  --info: #0284c7;
+  --info-bg: rgba(2, 132, 199, 0.1);
 
-Follow whichever frontend folder-structure option (`Option A` feature-based or
-`Option B` type-based) is already established for this repo, per the
-`epic-implement-and-test` skill's Folder Structure Conventions. Shared design
-primitives (buttons, cards, chart theme wrapper) always go in the shared
-`components/` folder, never duplicated inside a feature/page folder.
+  /* Chart / BI Visualization Palette */
+  --chart-1: #4f46e5;
+  --chart-2: #0891b2;
+  --chart-3: #059669;
+  --chart-4: #d97706;
+  --chart-5: #9333ea;
+  --chart-6: #e11d48;
+  --chart-grid: rgba(15, 23, 42, 0.06);
 
-## Hard Rules
+  /* Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 16px 36px -4px rgba(15, 23, 42, 0.12), 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+}
+```
 
-- **Never ship a raw, unstyled HTML element** (default `<button>`, default
-  `<select>`) in a user-facing screen — always route through the shared
-  component library.
-- **Never introduce a new color, spacing value, or font size** outside the
-  defined design tokens without updating the token config first.
-- **Never leave an async action without a loading and error state.**
-- **Never let two different epics invent two different patterns** for the
-  same kind of thing (e.g., two different "empty state" layouts) — check
-  existing components first and reuse/extend them.
+---
+
+## 🌗 Theme Switcher Pattern (`useTheme`)
+
+Use a shared theme hook in `frontend/src/hooks/useTheme.js`:
+
+```javascript
+import { useState, useEffect } from 'react';
+
+export function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('insightforge_theme');
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('insightforge_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  return { theme, toggleTheme, isDark: theme === 'dark' };
+}
+```
+
+---
+
+## 📊 Chart & BI Visualization Guidelines
+
+When integrating charts (e.g., Chart.js, Recharts, or custom SVG widgets):
+1. **Never use static hex codes** for axes, grid lines, or tooltips.
+2. Grid lines must use `var(--chart-grid)`.
+3. Tooltip containers must use `.glass-panel` background with `var(--text-primary)` font.
+4. Categorical data series must cycle through `--chart-1` to `--chart-6`.
+5. KPI change indicators: use `--success` with up-arrow for positive gains, `--error` with down-arrow for declines.
+
+---
+
+## 🧱 Key Component Specifications
+
+1. **Cards & Panels (`.glass-panel`):**
+   * Dark Mode: Subtle blur over deep midnight navy with semi-transparent border (`rgba(255,255,255,0.08)`).
+   * Light Mode: Crisp white with subtle shadow and border (`rgba(15,23,42,0.08)`).
+2. **Buttons (`.btn-primary`, `.btn-outline`):**
+   * Primary: Gradient fill with subtle accent glow and slight hover translateY(-1px).
+   * Outline: Bordered with `--border-medium`, background becomes `--bg-tertiary` on hover.
+3. **Data Tables:**
+   * Alternating subtle row backgrounds.
+   * Sticky headers with `var(--bg-secondary)` backdrop filter.
+4. **Form Inputs:**
+   * Background: `var(--bg-secondary)` with `var(--border-subtle)`.
+   * Focus ring: 2px solid `var(--border-focus)` with subtle outer glow.
+
+---
+
+## ⚡ Hard Rules for UI Implementation
+
+- **No Pure Black (#000000) or Pure White (#ffffff) text on stark backgrounds**: Use tailored slate tones (`#f8fafc` / `#0f172a`).
+- **All Interactive Elements Must Have Hover & Active Micro-Animations**: Smooth transitions (`0.2s cubic-bezier(0.4, 0, 0.2, 1)`).
+- **Responsive by Default**: All grids must use CSS grid with `minmax()` or flexbox with wrap.
+- **Always Test in Both Modes**: Toggle theme back and forth during development to verify readability.
