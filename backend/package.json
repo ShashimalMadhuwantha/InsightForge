@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
-    "test:coverage": "cross-env NODE_ENV=test jest --coverage",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage --forceExit",
     "migrate:make": "knex --knexfile src/common/config/knexfile.js migrate:make -x js",
     "migrate:up": "knex --knexfile src/common/config/knexfile.js migrate:latest",
     "migrate:down": "knex --knexfile src/common/config/knexfile.js migrate:rollback",
@@ -42,6 +42,7 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "globalTeardown": "<rootDir>/src/tests/teardown.js",
     "testMatch": [
       "**/__tests__/**/*.js",
       "**/?(*.)+(spec|test).js"
