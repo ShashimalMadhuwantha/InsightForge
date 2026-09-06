@@ -131,7 +131,7 @@ export function HealthStatusView() {
         {/* Service Metrics Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
           {/* Backend API */}
-          <div className="glass-panel" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)' }}>
+          <div className="glass-panel" style={{ padding: '1.25rem', background: 'var(--bg-secondary)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
                 <Server size={18} color="var(--accent-secondary)" />
@@ -147,7 +147,7 @@ export function HealthStatusView() {
           </div>
 
           {/* Database */}
-          <div className="glass-panel" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)' }}>
+          <div className="glass-panel" style={{ padding: '1.25rem', background: 'var(--bg-secondary)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
                 <Database size={18} color="var(--accent-primary)" />
@@ -163,7 +163,7 @@ export function HealthStatusView() {
           </div>
 
           {/* Redis Cache */}
-          <div className="glass-panel" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)' }}>
+          <div className="glass-panel" style={{ padding: '1.25rem', background: 'var(--bg-secondary)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
                 <Layers size={18} color="var(--warning)" />

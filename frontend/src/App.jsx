@@ -11,6 +11,8 @@ import { TenantSettingsPage } from './features/tenants/TenantSettingsPage';
 import { HealthStatusView } from './features/system/HealthStatusView';
 import { Sparkles, ArrowRight, ShieldCheck, Database, Layers } from 'lucide-react';
 
+import { ThemeProvider } from './context/ThemeContext';
+
 function DashboardHome() {
   const { user, tenant, isAuthenticated } = useAuth();
 
@@ -59,38 +61,40 @@ function DashboardHome() {
 
 export function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<DashboardHome />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <TenantSettingsPage />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-          <footer style={{
-            borderTop: '1px solid var(--border-subtle)',
-            padding: '1.5rem',
-            textAlign: 'center',
-            fontSize: '0.85rem',
-            color: 'var(--text-muted)',
-            marginTop: 'auto',
-          }}>
-            InsightForge Platform &copy; 2026. Multi-Tenant Business Intelligence SaaS.
-          </footer>
-        </div>
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<DashboardHome />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <TenantSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+            <footer style={{
+              borderTop: '1px solid var(--border-subtle)',
+              padding: '1.5rem',
+              textAlign: 'center',
+              fontSize: '0.85rem',
+              color: 'var(--text-muted)',
+              marginTop: 'auto',
+            }}>
+              InsightForge Platform &copy; 2026. Multi-Tenant Business Intelligence SaaS.
+            </footer>
+          </div>
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
