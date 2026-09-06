@@ -1,6 +1,4 @@
-import React from 'react';
-import { HealthStatusView } from './features/system/HealthStatusView';
-import { BarChart3, ShieldCheck, Zap, Sparkles } from 'lucide-react';
+import { BarChart3, ShieldCheck, Sparkles } from 'lucide-react';
 
 export function App() {
   return (

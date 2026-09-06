@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const config = require('./common/config/env');
 const healthRoutes = require('./modules/system/health.routes');
-const { notFoundHandler, errorHandler } = require('./common/middlewares/errorHandler');
 
 const app = express();
 
