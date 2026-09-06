@@ -1,117 +1,169 @@
 ---
 name: frontend-design
 description: >
-  Guidelines, design tokens, and UI/UX conventions for the InsightForge Multi-Tenant BI SaaS platform.
-  Use this skill whenever creating, updating, or styling frontend components, pages, charts, widgets,
-  and layouts to ensure a consistent, world-class aesthetic with full Dark Mode and Light Mode support.
+  Comprehensive UI/UX design system, tokens, spatial hierarchy, and component conventions for
+  InsightForge Multi-Tenant BI SaaS platform. Use this skill whenever creating, updating,
+  or styling frontend components, pages, charts, widgets, layouts, modals, and data tables
+  to ensure a stunning, tier-1 SaaS aesthetic (Linear/Vercel/Stripe grade) with seamless Dark & Light mode.
 ---
 
 # Skill: Frontend Design & Theming System
 
-## Purpose
+## Purpose & Visual DNA
 
-Define the visual language, design system tokens, and UX guidelines for the **InsightForge BI SaaS platform**. Every user interface element must feel modern, premium, responsive, and seamlessly support both **Dark Mode (Midnight Slate)** and **Light Mode (Clean Porcelain)**.
+Define the exact visual language, design system tokens, layout hierarchy, and micro-interaction guidelines for **InsightForge BI SaaS platform**.
+
+InsightForge must look and feel like a **tier-1 modern enterprise SaaS** (inspired by Linear, Stripe, and Vercel) — never a generic, flat, AI-generated template.
 
 ---
 
-## 🎨 Color Palette & CSS Variables
+## 💎 Core Design Principles (Anti-Generic AI Design)
 
-All components, layouts, charts, and widgets **must use CSS variables** (`var(--token)`) rather than hardcoded hex codes, ensuring instant theme switching.
+1. **Spatial Depth & Elevation (Layering over Flatness):**
+   - Use 4 distinct elevation tiers:
+     - **Canvas Base (`--bg-primary`)**: Deep cosmic slate (Dark: `#080c14`, Light: `#f8fafc`) with subtle ambient radial glow mesh.
+     - **Structural Panels (`--bg-secondary`)**: Sidebar and Topbar with crisp 1px borders and backdrop blur.
+     - **Interactive Cards (`--bg-card`)**: Glassmorphic panels with dual-layer border (subtle top highlight, crisp side/bottom boundary) and hover lift.
+     - **Elevated Overlays (`--bg-elevated`)**: Dropdowns and Modals with deep shadows (`--shadow-xl`) and backdrop-filter blur (16px).
 
-### Design Tokens (`frontend/src/index.css`)
+2. **Typography & Data Density Hierarchy:**
+   - **Headings**: Tight tracking (`letter-spacing: -0.025em; font-weight: 700`).
+   - **Hero Numbers & KPIs**: Bold display typography (`font-weight: 800; letter-spacing: -0.03em`) with gradient text clipping or high-contrast foreground.
+   - **Tabular Data & Numbers**: **Must** use `font-variant-numeric: tabular-nums` to prevent number jitter and ensure crisp vertical alignment in tables and KPI meters.
+   - **Micro Badges & Section Tags**: `letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.70rem; font-weight: 700;`.
+
+3. **High-Contrast, Harmonious Color Palettes:**
+   - Avoid muddy grays. Use curated obsidian night tones for Dark Mode and crystal porcelain tones for Light Mode.
+   - Every status (Active, Suspended, Warning, Processing) must have a paired **surface tint** (10-15% opacity) and **crisp solid foreground** with an optional live pulse indicator.
+
+4. **Delightful Micro-Interactions & Spring Physics:**
+   - Easing: **Always** use Apple/Linear style spring easing: `cubic-bezier(0.16, 1, 0.3, 1)` with 200ms - 300ms durations.
+   - Buttons: Push micro-compression on click (`:active { transform: scale(0.97); }`).
+   - Cards: Subtle lift on hover (`transform: translateY(-2px); box-shadow: var(--shadow-card-hover);`).
+   - Badges & Status: Live pulse dot animations on real-time metrics.
+
+---
+
+## 🎨 Complete Design Tokens Matrix (`index.css`)
+
+All styles **must** reference these CSS variables via `var(--token-name)`:
 
 ```css
 /* ==========================================================================
-   THEME DESIGN TOKENS: LIGHT & DARK MODES
+   INSIGHTFORGE DESIGN SYSTEM TOKENS
    ========================================================================== */
 
 :root,
 [data-theme="dark"] {
-  /* Surface & Backgrounds */
-  --bg-primary: #090d16;
-  --bg-secondary: #0f172a;
-  --bg-tertiary: #1e293b;
-  --bg-card: rgba(15, 23, 42, 0.75);
-  --bg-card-hover: rgba(30, 41, 59, 0.85);
-  --bg-glass: rgba(15, 23, 42, 0.65);
+  /* Canvas & Surfaces */
+  --bg-primary: #080c14;
+  --bg-secondary: #0e1526;
+  --bg-tertiary: #162038;
+  --bg-card: rgba(14, 21, 38, 0.75);
+  --bg-card-hover: rgba(22, 32, 56, 0.90);
+  --bg-glass: rgba(14, 21, 38, 0.65);
+  --bg-elevated: #1a2540;
+  --bg-input: rgba(10, 16, 30, 0.85);
 
   /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.24);
   --border-focus: #6366f1;
+  --border-card-highlight: rgba(255, 255, 255, 0.12);
 
   /* Typography */
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
+  --text-inverse: #0f172a;
 
   /* Brand Accents */
   --accent-primary: #6366f1;
   --accent-primary-hover: #4f46e5;
   --accent-secondary: #06b6d4;
   --accent-gradient: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
-  --accent-glow: 0 0 25px rgba(99, 102, 241, 0.35);
+  --accent-gradient-text: linear-gradient(135deg, #a5b4fc 0%, #38bdf8 100%);
+  --accent-glow: 0 0 24px rgba(99, 102, 241, 0.35);
+  --accent-glow-subtle: 0 0 12px rgba(99, 102, 241, 0.18);
 
-  /* Status Colors */
+  /* Semantic Status Colors (Solid + Alpha Tints) */
   --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.14);
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --success-border: rgba(16, 185, 129, 0.25);
   --warning: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.14);
+  --warning-bg: rgba(245, 158, 11, 0.12);
+  --warning-border: rgba(245, 158, 11, 0.25);
   --error: #f43f5e;
-  --error-bg: rgba(244, 63, 94, 0.14);
+  --error-bg: rgba(244, 63, 94, 0.12);
+  --error-border: rgba(244, 63, 94, 0.25);
   --info: #38bdf8;
-  --info-bg: rgba(56, 189, 248, 0.14);
+  --info-bg: rgba(56, 189, 248, 0.12);
+  --info-border: rgba(56, 189, 248, 0.25);
 
   /* Chart / BI Visualization Palette */
-  --chart-1: #6366f1; /* Indigo */
-  --chart-2: #06b6d4; /* Cyan */
-  --chart-3: #10b981; /* Emerald */
-  --chart-4: #f59e0b; /* Amber */
-  --chart-5: #a855f7; /* Purple */
-  --chart-6: #f43f5e; /* Rose */
-  --chart-grid: rgba(255, 255, 255, 0.06);
+  --chart-1: #6366f1;
+  --chart-2: #06b6d4;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #a855f7;
+  --chart-6: #f43f5e;
+  --chart-grid: rgba(255, 255, 255, 0.05);
 
-  /* Shadows */
+  /* Layered Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 14px 36px -4px rgba(0, 0, 0, 0.65), 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 24px 60px -8px rgba(0, 0, 0, 0.85);
+  --shadow-card-hover: 0 12px 30px -4px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.15);
 }
 
 [data-theme="light"] {
-  /* Surface & Backgrounds */
+  /* Canvas & Surfaces */
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card: rgba(255, 255, 255, 0.85);
   --bg-card-hover: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.8);
+  --bg-glass: rgba(255, 255, 255, 0.75);
+  --bg-elevated: #ffffff;
+  --bg-input: #f8fafc;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(15, 23, 42, 0.08);
-  --border-medium: rgba(15, 23, 42, 0.15);
+  --border-subtle: rgba(15, 23, 42, 0.07);
+  --border-medium: rgba(15, 23, 42, 0.14);
+  --border-strong: rgba(15, 23, 42, 0.22);
   --border-focus: #4f46e5;
+  --border-card-highlight: rgba(255, 255, 255, 0.9);
 
   /* Typography */
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
 
   /* Brand Accents */
   --accent-primary: #4f46e5;
   --accent-primary-hover: #4338ca;
   --accent-secondary: #0891b2;
   --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #0891b2 100%);
-  --accent-glow: 0 0 25px rgba(79, 70, 229, 0.2);
+  --accent-gradient-text: linear-gradient(135deg, #4338ca 0%, #0284c7 100%);
+  --accent-glow: 0 0 24px rgba(79, 70, 229, 0.20);
+  --accent-glow-subtle: 0 0 12px rgba(79, 70, 229, 0.10);
 
-  /* Status Colors */
+  /* Semantic Status Colors (Solid + Alpha Tints) */
   --success: #059669;
-  --success-bg: rgba(5, 150, 105, 0.1);
+  --success-bg: rgba(5, 150, 105, 0.08);
+  --success-border: rgba(5, 150, 105, 0.20);
   --warning: #d97706;
-  --warning-bg: rgba(217, 119, 6, 0.1);
+  --warning-bg: rgba(217, 119, 6, 0.08);
+  --warning-border: rgba(217, 119, 6, 0.20);
   --error: #e11d48;
-  --error-bg: rgba(225, 29, 72, 0.1);
+  --error-bg: rgba(225, 29, 72, 0.08);
+  --error-border: rgba(225, 29, 72, 0.20);
   --info: #0284c7;
-  --info-bg: rgba(2, 132, 199, 0.1);
+  --info-bg: rgba(2, 132, 199, 0.08);
+  --info-border: rgba(2, 132, 199, 0.20);
 
   /* Chart / BI Visualization Palette */
   --chart-1: #4f46e5;
@@ -122,75 +174,69 @@ All components, layouts, charts, and widgets **must use CSS variables** (`var(--
   --chart-6: #e11d48;
   --chart-grid: rgba(15, 23, 42, 0.06);
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 16px 36px -4px rgba(15, 23, 42, 0.12), 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+  /* Layered Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --shadow-lg: 0 16px 36px -4px rgba(15, 23, 42, 0.10), 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+  --shadow-xl: 0 24px 60px -8px rgba(15, 23, 42, 0.15);
+  --shadow-card-hover: 0 12px 30px -4px rgba(15, 23, 42, 0.12), 0 0 20px rgba(79, 70, 229, 0.08);
 }
 ```
 
 ---
 
-## 🌗 Theme Switcher Pattern (`useTheme`)
+## 🧱 Component Styling Specifications
 
-Use a shared theme hook in `frontend/src/hooks/useTheme.js`:
+### 1. KPI & Analytics Stat Cards (`.stat-card` or `.kpi-card`)
+- **Structure**:
+  - Top row: Section title (micro-badge uppercase) + Icon container in tinted round circle/pill.
+  - Middle row: Large bold figure (`tabular-nums font-extrabold text-2xl`).
+  - Bottom row: Growth delta badge (`+14.2%` with trend arrow) + contextual subtitle (`vs. previous month`).
+- **Styling**:
+  - Background: `var(--bg-card)` with `backdrop-filter: blur(12px)`.
+  - Border: `1px solid var(--border-subtle)` with top border highlight `1px solid var(--border-card-highlight)`.
+  - Hover: `transform: translateY(-2px); box-shadow: var(--shadow-card-hover);`.
 
-```javascript
-import { useState, useEffect } from 'react';
+### 2. High-End Data Tables (`.table-container`)
+- **Structure**:
+  - Sticky glass header with `var(--bg-secondary)` and subtle bottom border.
+  - Generous row padding (`padding: 14px 18px`).
+  - Row Hover: Soft background transition (`var(--bg-card-hover)`), subtle left accent indicator or pill corners.
+  - Status badges with live pulsing indicator dots (`.status-pill`).
+  - Numerical columns right-aligned with `tabular-nums`.
+  - Action toolbars with ghost icon buttons (`.btn-ghost-icon`).
 
-export function useTheme() {
-  const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem('insightforge_theme');
-    if (saved) return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
+### 3. Glassmorphic Modals & Dialogs (`.modal-backdrop`, `.modal-box`)
+- **Backdrop**: `rgba(0, 0, 0, 0.65)` with `backdrop-filter: blur(12px)`.
+- **Modal Container**:
+  - Entry animation: `animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards`.
+  - Border: `1px solid var(--border-medium)`.
+  - Header: Icon badge with title + description + close button.
+  - Footer: Clear visual hierarchy: Ghost/Cancel button on left or secondary position, solid Gradient Primary on right.
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('insightforge_theme', theme);
-  }, [theme]);
+### 4. Form Inputs & Interactive Controls (`.form-input`, `.form-select`)
+- **Background**: `var(--bg-input)`.
+- **Border**: `1px solid var(--border-subtle)`.
+- **Focus State**: `border-color: var(--border-focus); box-shadow: var(--accent-glow-subtle); outline: none;`.
+- **Transitions**: `transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1)`.
+- **Micro-labels**: Bold, small, uppercase with subtle tracking.
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  return { theme, toggleTheme, isDark: theme === 'dark' };
-}
-```
-
----
-
-## 📊 Chart & BI Visualization Guidelines
-
-When integrating charts (e.g., Chart.js, Recharts, or custom SVG widgets):
-1. **Never use static hex codes** for axes, grid lines, or tooltips.
-2. Grid lines must use `var(--chart-grid)`.
-3. Tooltip containers must use `.glass-panel` background with `var(--text-primary)` font.
-4. Categorical data series must cycle through `--chart-1` to `--chart-6`.
-5. KPI change indicators: use `--success` with up-arrow for positive gains, `--error` with down-arrow for declines.
-
----
-
-## 🧱 Key Component Specifications
-
-1. **Cards & Panels (`.glass-panel`):**
-   * Dark Mode: Subtle blur over deep midnight navy with semi-transparent border (`rgba(255,255,255,0.08)`).
-   * Light Mode: Crisp white with subtle shadow and border (`rgba(15,23,42,0.08)`).
-2. **Buttons (`.btn-primary`, `.btn-outline`):**
-   * Primary: Gradient fill with subtle accent glow and slight hover translateY(-1px).
-   * Outline: Bordered with `--border-medium`, background becomes `--bg-tertiary` on hover.
-3. **Data Tables:**
-   * Alternating subtle row backgrounds.
-   * Sticky headers with `var(--bg-secondary)` backdrop filter.
-4. **Form Inputs:**
-   * Background: `var(--bg-secondary)` with `var(--border-subtle)`.
-   * Focus ring: 2px solid `var(--border-focus)` with subtle outer glow.
+### 5. Navigation & Layouts (`.app-navbar`, `.admin-sidebar`)
+- **Sidebar**:
+  - Dark Mode: Deep `#090d16` with 1px right border.
+  - Active Nav Item: Distinct gradient left border or pill glow background (`var(--accent-glow-subtle)`), bold active text.
+  - Inactive Item: Muted text with smooth hover opacity and hover background.
+- **Top Navbar**:
+  - Glassmorphic fixed bar with `backdrop-filter: blur(16px)`.
+  - Brand Logo with gradient icon mark and bold typography.
+  - Theme Switcher with smooth icon rotation transition.
 
 ---
 
-## ⚡ Hard Rules for UI Implementation
+## ⚡ Non-Negotiable Hard Rules
 
-- **No Pure Black (#000000) or Pure White (#ffffff) text on stark backgrounds**: Use tailored slate tones (`#f8fafc` / `#0f172a`).
-- **All Interactive Elements Must Have Hover & Active Micro-Animations**: Smooth transitions (`0.2s cubic-bezier(0.4, 0, 0.2, 1)`).
-- **Responsive by Default**: All grids must use CSS grid with `minmax()` or flexbox with wrap.
-- **Always Test in Both Modes**: Toggle theme back and forth during development to verify readability.
+1. **Zero Hardcoded Colors**: Never use `#ffffff`, `#000000`, `#1a202c`, `rgb(...)` in component inline styles or CSS rules without using `var(--token)`.
+2. **Tabular Numbers for Metrics**: All counts, percentages, rows, sizes, and timestamps must include `font-variant-numeric: tabular-nums` or `font-mono`.
+3. **Smooth Interactive Transitions**: Every button, link, tab, modal, and input must use `transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1)`.
+4. **Theme Resilience**: Check both Light and Dark modes. Contrast must pass WCAG AA (4.5:1 ratio) on every text element.
+5. **No Clunky Raw HTML Alerts**: Use styled status banners or toast cards with icons and theme-aware borders.
