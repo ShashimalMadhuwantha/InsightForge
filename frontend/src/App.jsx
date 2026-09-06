@@ -8,6 +8,9 @@ import { SignupPage } from './features/auth/SignupPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { TenantSettingsPage } from './features/tenants/TenantSettingsPage';
+import { SuperAdminLayout } from './features/admin/SuperAdminLayout';
+import { TenantDetailsPage } from './features/admin/TenantDetailsPage';
+import { AdminRoute } from './components/AdminRoute';
 import { HealthStatusView } from './features/system/HealthStatusView';
 import { Sparkles, ArrowRight, ShieldCheck, Database, Layers } from 'lucide-react';
 
@@ -78,6 +81,22 @@ export function App() {
                   <ProtectedRoute>
                     <TenantSettingsPage />
                   </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <SuperAdminLayout />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/tenants/:id"
+                element={
+                  <AdminRoute>
+                    <TenantDetailsPage />
+                  </AdminRoute>
                 }
               />
             </Routes>
