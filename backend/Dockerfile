@@ -14,8 +14,8 @@ RUN npm ci
 # Copy application source code
 COPY . .
 
-# Ensure entrypoint script is executable
-RUN chmod +x docker-entrypoint.sh
+# Ensure entrypoint script has Unix LF line endings and is executable
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
 
 EXPOSE 5000
 
