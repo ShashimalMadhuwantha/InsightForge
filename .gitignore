@@ -35,7 +35,8 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 
-# Uploads
+# Uploads & Sample Data
 uploads/
 backend/uploads/
+sample-datasets/
 
