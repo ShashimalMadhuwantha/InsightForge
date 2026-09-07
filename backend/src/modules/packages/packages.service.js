@@ -1,3 +1,4 @@
+const { randomUUID } = require('crypto');
 const { db } = require('../../common/config/db');
 const entitlementService = require('./entitlement.service');
 
@@ -66,16 +67,17 @@ class PackagesService {
     // Write audit log if table exists
     const hasAuditTable = await db.schema.hasTable('audit_logs');
     if (hasAuditTable) {
+      const adminUserId = user?.id && user.id.length === 36 ? user.id : '00000000-0000-0000-0000-000000000001';
       await db('audit_logs').insert({
-        tenant_id: tenantId,
-        admin_id: user?.id || null,
-        admin_email: user?.email || 'self-service',
+        id: randomUUID(),
+        admin_user_id: adminUserId,
+        target_tenant_id: tenantId,
         action: 'TENANT_PACKAGE_UPDATE',
         details: JSON.stringify({
           from: previousPackageId,
           to: pkg.id,
           packageName: pkg.name,
-          source: user?.role === 'super_admin' ? 'super_admin' : 'tenant_self_serve',
+          source: user?.role === 'super_admin' ? 'super_admin' : user?.email ? 'tenant_self_serve' : 'billing_webhook',
         }),
         created_at: new Date(),
       });
