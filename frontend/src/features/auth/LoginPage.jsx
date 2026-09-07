@@ -22,8 +22,12 @@ export function LoginPage() {
 
     setLoading(true);
     try {
-      await login(email, password);
-      navigate('/');
+      const data = await login(email, password);
+      if (data?.user?.role === 'super_admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.message || 'Invalid email or password.');
     } finally {

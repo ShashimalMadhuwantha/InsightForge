@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BarChart3, Sun, Moon, LogOut, Settings, Building2, User, Shield } from 'lucide-react';
+import { BarChart3, Sun, Moon, LogOut, Settings, Building2, Shield, User } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
 import { useTheme } from '../hooks/useTheme';
 
@@ -24,9 +24,9 @@ export function Navbar() {
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      padding: '0.85rem 2rem',
+      padding: '0.75rem 2rem',
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* Brand */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
@@ -36,22 +36,23 @@ export function Navbar() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#fff',
+            color: 'var(--text-inverse)',
+            boxShadow: 'var(--accent-glow-subtle)',
           }}>
             <BarChart3 size={20} />
           </div>
-          <div>
-            <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.03em', background: 'var(--accent-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', background: 'var(--accent-gradient-text)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               InsightForge
             </span>
-            <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', padding: '0.15rem 0.45rem', background: 'var(--success-bg)', color: 'var(--success)', borderRadius: 'var(--radius-full)', border: '1px solid rgba(16, 185, 129, 0.3)', textTransform: 'uppercase', fontWeight: 700 }}>
+            <span className="status-pill success" style={{ fontSize: '0.65rem', padding: '0.15rem 0.45rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               SaaS BI
             </span>
           </div>
         </Link>
 
         {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {/* Theme Switcher Button */}
           <button
             className="btn-icon"
@@ -59,16 +60,16 @@ export function Navbar() {
             title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             data-testid="theme-toggle-btn"
           >
-            {theme === 'dark' ? <Sun size={18} color="var(--warning)" /> : <Moon size={18} color="var(--accent-primary)" />}
+            {theme === 'dark' ? <Sun size={17} color="var(--warning)" /> : <Moon size={17} color="var(--accent-primary)" />}
           </button>
 
           {isAuthenticated ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
               {isSuperAdmin && (
                 <Link
                   to="/admin"
                   className="btn btn-primary"
-                  style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+                  style={{ padding: '0.45rem 0.9rem', fontSize: '0.8rem' }}
                   data-testid="super-admin-nav-link"
                 >
                   <Shield size={14} />
@@ -76,24 +77,41 @@ export function Navbar() {
                 </Link>
               )}
 
-              {/* Tenant Badge */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.35rem 0.75rem',
-                background: 'var(--bg-tertiary)',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '0.8rem',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-subtle)',
-              }}>
-                <Building2 size={14} color="var(--accent-secondary)" />
-                <span style={{ fontWeight: 600 }}>{tenant?.name || 'Workspace'}</span>
-              </div>
+              {isSuperAdmin ? (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.35rem 0.8rem',
+                  background: 'var(--accent-glow)',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.8rem',
+                  color: 'var(--accent-primary)',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  fontWeight: 700,
+                }}>
+                  <Shield size={14} />
+                  <span>Platform Super Admin</span>
+                </div>
+              ) : (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.35rem 0.8rem',
+                  background: 'var(--bg-secondary)',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.8rem',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-subtle)',
+                }}>
+                  <Building2 size={14} color="var(--accent-secondary)" />
+                  <span style={{ fontWeight: 650 }}>{tenant?.name || 'Workspace'}</span>
+                </div>
+              )}
 
-              {/* User / Settings Link */}
-              <Link to="/settings" className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} data-testid="settings-nav-link">
+              {/* User Settings Link */}
+              <Link to="/settings" className="btn btn-outline" style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem' }} data-testid="settings-nav-link">
                 <Settings size={14} />
                 <span>Settings</span>
               </Link>

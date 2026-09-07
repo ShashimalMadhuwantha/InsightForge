@@ -1,19 +1,19 @@
 ---
 name: frontend-design
 description: >
-  Comprehensive UI/UX design system, tokens, spatial hierarchy, and component conventions for
-  InsightForge Multi-Tenant BI SaaS platform. Use this skill whenever creating, updating,
-  or styling frontend components, pages, charts, widgets, layouts, modals, and data tables
-  to ensure a stunning, tier-1 SaaS aesthetic (Linear/Vercel/Stripe grade) with seamless Dark & Light mode.
+  Comprehensive UI/UX design system, tokens, spatial hierarchy, typography, and component conventions
+  for InsightForge Multi-Tenant BI SaaS platform (Linear, Vercel Geist, and Shadcn UI grade).
+  Use this skill whenever creating, updating, or styling frontend components, pages, charts, widgets,
+  layouts, modals, and data tables to ensure a world-class, tier-1 SaaS aesthetic with seamless Dark & Light mode.
 ---
 
-# Skill: Frontend Design & Theming System
+# Skill: Frontend Design & Theming System (Linear / Vercel / Shadcn Grade)
 
-## Purpose & Visual DNA
+## 🎯 Purpose & Visual DNA
 
-Define the exact visual language, design system tokens, layout hierarchy, and micro-interaction guidelines for **InsightForge BI SaaS platform**.
+Define the exact visual language, design system tokens, typography rules, layout hierarchy, and micro-interaction guidelines for **InsightForge BI SaaS platform**.
 
-InsightForge must look and feel like a **tier-1 modern enterprise SaaS** (inspired by Linear, Stripe, and Vercel) — never a generic, flat, AI-generated template.
+InsightForge must look and feel like a **tier-1 modern enterprise SaaS** (inspired by Linear, Stripe, Vercel Geist, and Tremor) — clean, intentional, highly readable, with razor-sharp typography and zero generic AI bloat.
 
 ---
 
@@ -23,18 +23,19 @@ InsightForge must look and feel like a **tier-1 modern enterprise SaaS** (inspir
    - Use 4 distinct elevation tiers:
      - **Canvas Base (`--bg-primary`)**: Deep cosmic slate (Dark: `#080c14`, Light: `#f8fafc`) with subtle ambient radial glow mesh.
      - **Structural Panels (`--bg-secondary`)**: Sidebar and Topbar with crisp 1px borders and backdrop blur.
-     - **Interactive Cards (`--bg-card`)**: Glassmorphic panels with dual-layer border (subtle top highlight, crisp side/bottom boundary) and hover lift.
+     - **Interactive Cards (`--bg-card`)**: Glassmorphic panels with dual-layer border (subtle top highlight `1px solid var(--border-card-highlight)`, crisp side/bottom boundary) and hover lift.
      - **Elevated Overlays (`--bg-elevated`)**: Dropdowns and Modals with deep shadows (`--shadow-xl`) and backdrop-filter blur (16px).
 
-2. **Typography & Data Density Hierarchy:**
-   - **Headings**: Tight tracking (`letter-spacing: -0.025em; font-weight: 700`).
-   - **Hero Numbers & KPIs**: Bold display typography (`font-weight: 800; letter-spacing: -0.03em`) with gradient text clipping or high-contrast foreground.
-   - **Tabular Data & Numbers**: **Must** use `font-variant-numeric: tabular-nums` to prevent number jitter and ensure crisp vertical alignment in tables and KPI meters.
+2. **Typography & Data Density Hierarchy (Linear Standard):**
+   - **Primary Sans**: `Inter`, `-apple-system`, `BlinkMacSystemFont`, `'Segoe UI'`, `Roboto`, sans-serif.
+   - **Monospace & Code**: `'JetBrains Mono'`, `'Geist Mono'`, monospace.
+   - **Headings**: Tight tracking (`letter-spacing: -0.025em; font-weight: 750`).
+   - **Tabular Data & Numbers**: **Must** use `font-variant-numeric: tabular-nums` to prevent number jitter in tables and KPI meters.
    - **Micro Badges & Section Tags**: `letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.70rem; font-weight: 700;`.
 
 3. **High-Contrast, Harmonious Color Palettes:**
    - Avoid muddy grays. Use curated obsidian night tones for Dark Mode and crystal porcelain tones for Light Mode.
-   - Every status (Active, Suspended, Warning, Processing) must have a paired **surface tint** (10-15% opacity) and **crisp solid foreground** with an optional live pulse indicator.
+   - Every status (Active, Suspended, Warning, Processing) must have a paired **surface tint** (10-15% opacity) and **crisp solid foreground** with an optional live pulse indicator (`.live-dot.pulse`).
 
 4. **Delightful Micro-Interactions & Spring Physics:**
    - Easing: **Always** use Apple/Linear style spring easing: `cubic-bezier(0.16, 1, 0.3, 1)` with 200ms - 300ms durations.
@@ -44,18 +45,14 @@ InsightForge must look and feel like a **tier-1 modern enterprise SaaS** (inspir
 
 ---
 
-## 🎨 Complete Design Tokens Matrix (`index.css`)
+## 🎨 Design Tokens Matrix (`frontend/src/index.css`)
 
-All styles **must** reference these CSS variables via `var(--token-name)`:
+All colors and surfaces **must** reference these CSS variables via `var(--token-name)`:
 
 ```css
-/* ==========================================================================
-   INSIGHTFORGE DESIGN SYSTEM TOKENS
-   ========================================================================== */
-
 :root,
 [data-theme="dark"] {
-  /* Canvas & Surfaces */
+  /* Canvas & Surfaces (Obsidian Slate) */
   --bg-primary: #080c14;
   --bg-secondary: #0e1526;
   --bg-tertiary: #162038;
@@ -119,7 +116,7 @@ All styles **must** reference these CSS variables via `var(--token-name)`:
 }
 
 [data-theme="light"] {
-  /* Canvas & Surfaces */
+  /* Canvas & Surfaces (Crystal Porcelain) */
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
@@ -151,7 +148,7 @@ All styles **must** reference these CSS variables via `var(--token-name)`:
   --accent-glow: 0 0 24px rgba(79, 70, 229, 0.20);
   --accent-glow-subtle: 0 0 12px rgba(79, 70, 229, 0.10);
 
-  /* Semantic Status Colors (Solid + Alpha Tints) */
+  /* Semantic Status Colors */
   --success: #059669;
   --success-bg: rgba(5, 150, 105, 0.08);
   --success-border: rgba(5, 150, 105, 0.20);
@@ -185,55 +182,81 @@ All styles **must** reference these CSS variables via `var(--token-name)`:
 
 ---
 
-## 🧱 Component Styling Specifications
+## 🌗 3. Theme Switcher Pattern (`useTheme`)
 
-### 1. KPI & Analytics Stat Cards (`.stat-card` or `.kpi-card`)
-- **Structure**:
-  - Top row: Section title (micro-badge uppercase) + Icon container in tinted round circle/pill.
-  - Middle row: Large bold figure (`tabular-nums font-extrabold text-2xl`).
-  - Bottom row: Growth delta badge (`+14.2%` with trend arrow) + contextual subtitle (`vs. previous month`).
-- **Styling**:
-  - Background: `var(--bg-card)` with `backdrop-filter: blur(12px)`.
-  - Border: `1px solid var(--border-subtle)` with top border highlight `1px solid var(--border-card-highlight)`.
-  - Hover: `transform: translateY(-2px); box-shadow: var(--shadow-card-hover);`.
+Use a shared theme hook in `frontend/src/hooks/useTheme.js` or `ThemeContext.jsx`:
 
-### 2. High-End Data Tables (`.table-container`)
-- **Structure**:
-  - Sticky glass header with `var(--bg-secondary)` and subtle bottom border.
-  - Generous row padding (`padding: 14px 18px`).
-  - Row Hover: Soft background transition (`var(--bg-card-hover)`), subtle left accent indicator or pill corners.
-  - Status badges with live pulsing indicator dots (`.status-pill`).
-  - Numerical columns right-aligned with `tabular-nums`.
-  - Action toolbars with ghost icon buttons (`.btn-ghost-icon`).
+```javascript
+import { useState, useEffect } from 'react';
 
-### 3. Glassmorphic Modals & Dialogs (`.modal-backdrop`, `.modal-box`)
-- **Backdrop**: `rgba(0, 0, 0, 0.65)` with `backdrop-filter: blur(12px)`.
-- **Modal Container**:
-  - Entry animation: `animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards`.
-  - Border: `1px solid var(--border-medium)`.
-  - Header: Icon badge with title + description + close button.
-  - Footer: Clear visual hierarchy: Ghost/Cancel button on left or secondary position, solid Gradient Primary on right.
+export function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('insightforge_theme');
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
 
-### 4. Form Inputs & Interactive Controls (`.form-input`, `.form-select`)
-- **Background**: `var(--bg-input)`.
-- **Border**: `1px solid var(--border-subtle)`.
-- **Focus State**: `border-color: var(--border-focus); box-shadow: var(--accent-glow-subtle); outline: none;`.
-- **Transitions**: `transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1)`.
-- **Micro-labels**: Bold, small, uppercase with subtle tracking.
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('insightforge_theme', theme);
+  }, [theme]);
 
-### 5. Navigation & Layouts (`.app-navbar`, `.admin-sidebar`)
-- **Sidebar**:
-  - Dark Mode: Deep `#090d16` with 1px right border.
-  - Active Nav Item: Distinct gradient left border or pill glow background (`var(--accent-glow-subtle)`), bold active text.
-  - Inactive Item: Muted text with smooth hover opacity and hover background.
-- **Top Navbar**:
-  - Glassmorphic fixed bar with `backdrop-filter: blur(16px)`.
-  - Brand Logo with gradient icon mark and bold typography.
-  - Theme Switcher with smooth icon rotation transition.
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  return { theme, toggleTheme, isDark: theme === 'dark' };
+}
+```
 
 ---
 
-## ⚡ Non-Negotiable Hard Rules
+## 📊 4. Chart & BI Visualization Guidelines
+
+When integrating charts (e.g., Chart.js, Recharts, or custom SVG widgets):
+1. **Never use static hex codes** for axes, grid lines, or tooltips.
+2. Grid lines must use `var(--chart-grid)`.
+3. Tooltip containers must use `.glass-panel` background with `var(--text-primary)` font.
+4. Categorical data series must cycle through `--chart-1` to `--chart-6`.
+5. KPI change indicators: use `--success` with up-arrow for positive gains, `--error` with down-arrow for declines.
+
+---
+
+## 🧱 5. Component Styling Specifications
+
+### 1. Analytics & KPI Cards (`.stat-card` - Tremor Style)
+- Clean card with top border highlight (`1px solid var(--border-card-highlight)`).
+- Uppercase section tag (`.section-tag`) paired with a tinted icon wrapper.
+- Bold tabular value (`font-weight: 800; font-variant-numeric: tabular-nums; font-size: 1.85rem`).
+- Trend delta badge with icon (`+14.2%`) and subtitle.
+
+### 2. High-Density Data Tables (`.modern-table` - Linear Style)
+- Sticky headers with `var(--bg-secondary)` and subtle bottom border.
+- Generous row padding (`14px 18px`).
+- Subtle row hover state (`var(--bg-card-hover)`).
+- Action buttons in ghost icon format (`.btn-icon`).
+- Numerical columns right-aligned with `tabular-nums`.
+
+### 3. Glassmorphic Modals & Dialogs (`.modal-backdrop`, `.modal-box`)
+- Frosted glass backdrop blur (`12px`).
+- Spring physics entry animation (`animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards`).
+- Clear header icon badge + title + description + close button.
+- Footer: Ghost/Cancel on left, solid Gradient Primary on right.
+
+### 4. Form Inputs & Interactive Controls (`.form-group`, `.form-label`)
+- Background: `var(--bg-input)`.
+- Border: `1px solid var(--border-subtle)`.
+- Focus State: `border-color: var(--border-focus); box-shadow: var(--accent-glow-subtle); outline: none;`.
+- Transitions: `transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1)`.
+
+### 5. Navigation & Layouts (`.app-navbar`, `.admin-sidebar`)
+- Sidebar: Dark Mode deep `#080c14` with 1px right border.
+- Top Navbar: Glassmorphic fixed bar with `backdrop-filter: blur(16px)`.
+- Theme Switcher: Smooth icon rotation transition with Sun/Moon icons.
+
+---
+
+## ⚡ 6. Non-Negotiable Hard Rules
 
 1. **Zero Hardcoded Colors**: Never use `#ffffff`, `#000000`, `#1a202c`, `rgb(...)` in component inline styles or CSS rules without using `var(--token)`.
 2. **Tabular Numbers for Metrics**: All counts, percentages, rows, sizes, and timestamps must include `font-variant-numeric: tabular-nums` or `font-mono`.

@@ -82,7 +82,7 @@ export function TenantSettingsPage() {
         {/* Active Package Card */}
         <div className="glass-panel" style={{ padding: '1.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
-            <div style={{ background: 'var(--accent-gradient)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
+            <div style={{ background: 'var(--accent-gradient)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: 'var(--text-inverse)' }}>
               <Layers size={18} />
             </div>
             <div>

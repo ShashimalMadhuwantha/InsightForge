@@ -117,7 +117,7 @@ export function GlobalAnalyticsOverview({ analytics, loading }) {
       <div className="glass-panel" style={{ padding: '1.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'var(--accent-gradient)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: '#fff' }}>
+            <div style={{ background: 'var(--accent-gradient)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: 'var(--text-inverse)' }}>
               <Layers size={18} />
             </div>
             <div>
@@ -151,6 +151,14 @@ export function GlobalAnalyticsOverview({ analytics, loading }) {
               </div>
               <div className="tabular-nums" style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
                 {tier.count} <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)' }}>tenants</span>
+              </div>
+              <div className="progress-bar-bg">
+                <div
+                  className="progress-bar-fill"
+                  style={{
+                    width: `${Math.min(100, Math.max(12, (tier.count / (metrics.totalTenants || 1)) * 100))}%`,
+                  }}
+                />
               </div>
             </div>
           ))}
