@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BarChart3, Sun, Moon, LogOut, Settings, Building2, Shield, User } from 'lucide-react';
+import { BarChart3, Sun, Moon, LogOut, Settings, Building2, Shield, Sparkles } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
 import { useTheme } from '../hooks/useTheme';
 
@@ -110,6 +110,12 @@ export function Navbar() {
                 </div>
               )}
 
+              {/* Plans Link */}
+              <Link to="/packages" className="btn btn-outline" style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem' }} data-testid="packages-nav-link">
+                <Sparkles size={14} color="var(--accent-primary)" />
+                <span>Plans</span>
+              </Link>
+
               {/* User Settings Link */}
               <Link to="/settings" className="btn btn-outline" style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem' }} data-testid="settings-nav-link">
                 <Settings size={14} />
@@ -123,6 +129,9 @@ export function Navbar() {
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <Link to="/pricing" className="btn btn-ghost" style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }} data-testid="pricing-nav-link">
+                Pricing
+              </Link>
               <Link to="/login" className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>
                 Sign In
               </Link>

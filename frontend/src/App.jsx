@@ -8,6 +8,7 @@ import { SignupPage } from './features/auth/SignupPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { TenantSettingsPage } from './features/tenants/TenantSettingsPage';
+import { PackageSelectionPage } from './features/packages/PackageSelectionPage';
 import { SuperAdminLayout } from './features/admin/SuperAdminLayout';
 import { TenantDetailsPage } from './features/admin/TenantDetailsPage';
 import { AdminRoute } from './components/AdminRoute';
@@ -90,6 +91,8 @@ export function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/packages" element={<PackageSelectionPage />} />
+              <Route path="/pricing" element={<PackageSelectionPage />} />
               <Route
                 path="/admin"
                 element={
