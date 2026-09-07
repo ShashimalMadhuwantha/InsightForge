@@ -6,7 +6,7 @@ function generateAccessToken(user) {
   return jwt.sign(
     {
       id: user.id,
-      tenantId: user.tenant_id,
+      tenantId: user.tenant_id || user.tenantId,
       email: user.email,
       role: user.role,
     },
@@ -19,7 +19,7 @@ function generateRefreshToken(user) {
   return jwt.sign(
     {
       id: user.id,
-      tenantId: user.tenant_id,
+      tenantId: user.tenant_id || user.tenantId,
       tokenType: 'refresh',
     },
     config.jwt.refreshSecret,

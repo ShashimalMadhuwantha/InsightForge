@@ -20,6 +20,7 @@ exports.seed = async function(knex) {
             max_file_size_mb: 5,
             allowed_cleansing_ops: ['trim_whitespace', 'remove_duplicates'],
             allowed_widget_types: ['table', 'bar', 'line'],
+            insight_depth: 'basic',
           }),
         },
         {
@@ -33,6 +34,7 @@ exports.seed = async function(knex) {
             max_file_size_mb: 25,
             allowed_cleansing_ops: ['trim_whitespace', 'remove_duplicates', 'fill_missing', 'standardize_types'],
             allowed_widget_types: ['table', 'bar', 'line', 'pie', 'kpi'],
+            insight_depth: 'standard',
           }),
         },
         {
@@ -46,6 +48,7 @@ exports.seed = async function(knex) {
             max_file_size_mb: 100,
             allowed_cleansing_ops: ['trim_whitespace', 'remove_duplicates', 'fill_missing', 'standardize_types', 'remove_outliers'],
             allowed_widget_types: ['table', 'bar', 'line', 'pie', 'kpi', 'scatter', 'area', 'donut'],
+            insight_depth: 'advanced',
           }),
         },
         {
@@ -59,6 +62,7 @@ exports.seed = async function(knex) {
             max_file_size_mb: 500,
             allowed_cleansing_ops: ['*'],
             allowed_widget_types: ['*'],
+            insight_depth: 'deep',
           }),
         },
       ])

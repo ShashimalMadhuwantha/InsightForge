@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Mail, Phone, Shield, Save, CheckCircle2, AlertCircle, Layers } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Building2, Mail, Phone, Shield, Save, CheckCircle2, AlertCircle, Layers, Sparkles, ArrowRight } from 'lucide-react';
 import { authService } from '../auth/authService';
 import { useAuth } from '../auth/AuthContext';
 
@@ -98,11 +99,22 @@ export function TenantSettingsPage() {
             </span>
           </div>
 
-          <div className="tabular-nums" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+          <div className="tabular-nums" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '1.25rem' }}>
             <div>&bull; Max Sub-Users: <strong style={{ color: 'var(--text-primary)' }}>{profile?.package?.limits?.max_sub_users ?? 1}</strong></div>
             <div>&bull; Max Data Sources: <strong style={{ color: 'var(--text-primary)' }}>{profile?.package?.limits?.max_data_sources ?? 2}</strong></div>
             <div>&bull; Max File Size: <strong style={{ color: 'var(--text-primary)' }}>{profile?.package?.limits?.max_file_size_mb ?? 5} MB</strong></div>
           </div>
+
+          <Link
+            to="/packages"
+            className="btn btn-outline"
+            style={{ width: '100%', padding: '0.55rem', fontSize: '0.825rem', justifyContent: 'center' }}
+            data-testid="upgrade-plan-settings-btn"
+          >
+            <Sparkles size={14} color="var(--accent-primary)" />
+            <span>Change / Upgrade Plan</span>
+            <ArrowRight size={14} />
+          </Link>
         </div>
 
         {/* Workspace Summary Card */}
