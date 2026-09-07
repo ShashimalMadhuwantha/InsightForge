@@ -210,6 +210,25 @@ class DataSourceParserWorker {
           updated_at: new Date(),
         });
 
+      const ds = await db('data_sources').where('id', dataSourceId).first();
+      if (ds) {
+        await db('data_source_versions')
+          .where({
+            data_source_id: dataSourceId,
+            version_number: ds.current_version || 1,
+          })
+          .update({
+            row_count: quality.rowCount,
+            schema_profile: JSON.stringify(quality.schemaProfile),
+            quality_metrics: JSON.stringify({
+              overall_score: quality.overallScore,
+              missing_values_count: quality.missingValuesCount,
+              duplicate_rows_count: quality.duplicateRowsCount,
+              completeness_pct: quality.completenessPct,
+            }),
+          });
+      }
+
       return { success: true, quality };
     } catch (err) {
       await db('data_sources')

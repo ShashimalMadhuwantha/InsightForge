@@ -469,7 +469,7 @@ export function DataStatusView() {
                       <span className="status-pill info">Version {v.version_number}</span>
                     </td>
                     <td className="tabular-nums">{(v.file_size_bytes / (1024 * 1024)).toFixed(2)} MB</td>
-                    <td className="tabular-nums">{v.row_count?.toLocaleString() || 0} rows</td>
+                    <td className="tabular-nums">{(v.row_count || (v.version_number === dataSource?.current_version ? dataSource?.row_count : 0))?.toLocaleString() || 0} rows</td>
                     <td className="tabular-nums">{new Date(v.created_at).toLocaleString()}</td>
                   </tr>
                 ))}

@@ -95,6 +95,7 @@ class DataSourcesService {
       quality_metrics: typeof ds.quality_metrics === 'string' ? JSON.parse(ds.quality_metrics) : ds.quality_metrics,
       versions: versions.map((v) => ({
         ...v,
+        row_count: v.row_count > 0 ? v.row_count : (v.version_number === ds.current_version ? ds.row_count : 0),
         schema_profile: typeof v.schema_profile === 'string' ? JSON.parse(v.schema_profile) : v.schema_profile,
         quality_metrics: typeof v.quality_metrics === 'string' ? JSON.parse(v.quality_metrics) : v.quality_metrics,
       })),
