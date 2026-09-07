@@ -1,0 +1,148 @@
+name: InsightForge CI Pipeline
+
+on:
+  push:
+    branches: [main, develop, 'epic/**', 'feature/**']
+  pull_request:
+    branches: [main, develop, 'epic/**']
+
+jobs:
+  backend-ci:
+    name: Backend Lint, Migration Gate & Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: insightforge_test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgrespassword
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      # Migration CI Gate: Verify up, status, seed, down, and re-up against disposable Postgres
+      - name: Test DB Migrations (Up)
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: insightforge_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgrespassword
+        run: npm run migrate:up
+
+      - name: Check Migration Status
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: insightforge_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgrespassword
+        run: npm run migrate:status
+
+      - name: Test DB Seeds
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: insightforge_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgrespassword
+        run: npm run seed:run
+
+      - name: Test DB Migrations Rollback (Down)
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: insightforge_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgrespassword
+        run: npm run migrate:down
+
+      - name: Re-apply Migrations for Integration Tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: insightforge_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgrespassword
+        run: npm run migrate:up
+
+      - name: Run Jest Test Suite
+        env:
+          NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: insightforge_test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgrespassword
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          USE_REAL_REDIS: "true"
+        run: npm test
+
+  frontend-ci:
+    name: Frontend Lint, Test & Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Vitest Suite
+        run: npm test
+
+      - name: Build Production Bundle
+        run: npm run build
