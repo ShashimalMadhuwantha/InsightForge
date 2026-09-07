@@ -11,13 +11,8 @@ export const dataSourceService = {
       formData.append('name', name);
     }
 
-    const res = await apiClient.post('/api/data-sources/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      onUploadProgress,
-    });
-    return res.data;
+    const res = await apiClient.post('/api/data-sources/upload', formData);
+    return res;
   },
 
   /**
@@ -61,12 +56,8 @@ export const dataSourceService = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await apiClient.post(`/api/data-sources/${id}/refresh`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return res.data;
+    const res = await apiClient.post(`/api/data-sources/${id}/refresh`, formData);
+    return res;
   },
 
   /**
