@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { BarChart3, Sun, Moon, LogOut, Settings, Building2, Shield, Sparkles, LayoutDashboard } from 'lucide-react';
+import { BarChart3, Sun, Moon, LogOut, Settings, Building2, Shield, Sparkles, LayoutDashboard, Database } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
 import { useTheme } from '../hooks/useTheme';
 
@@ -69,6 +69,19 @@ export function Navbar() {
               >
                 <LayoutDashboard size={15} />
                 <span>Dashboard</span>
+              </Link>
+              <Link
+                to="/data-sources"
+                data-testid="datasources-nav-link"
+                className={`btn ${pathname.startsWith('/data-sources') ? 'btn-primary' : 'btn-ghost'}`}
+                style={{
+                  padding: '0.45rem 0.85rem',
+                  fontSize: '0.825rem',
+                  gap: '0.4rem',
+                }}
+              >
+                <Database size={15} color={pathname.startsWith('/data-sources') ? 'currentColor' : 'var(--accent-secondary)'} />
+                <span>Data Sources</span>
               </Link>
               <Link
                 to="/packages"

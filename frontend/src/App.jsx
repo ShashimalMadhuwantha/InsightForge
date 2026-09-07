@@ -9,6 +9,9 @@ import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { TenantSettingsPage } from './features/tenants/TenantSettingsPage';
 import { PackageSelectionPage } from './features/packages/PackageSelectionPage';
+import { DataSourcesListPage } from './features/data-sources/DataSourcesListPage';
+import { DataSourceUploadPage } from './features/data-sources/DataSourceUploadPage';
+import { DataStatusView } from './features/data-sources/DataStatusView';
 import { SuperAdminLayout } from './features/admin/SuperAdminLayout';
 import { TenantDetailsPage } from './features/admin/TenantDetailsPage';
 import { AdminRoute } from './components/AdminRoute';
@@ -88,6 +91,30 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <TenantSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-sources"
+                element={
+                  <ProtectedRoute>
+                    <DataSourcesListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-sources/upload"
+                element={
+                  <ProtectedRoute>
+                    <DataSourceUploadPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-sources/:id/status"
+                element={
+                  <ProtectedRoute>
+                    <DataStatusView />
                   </ProtectedRoute>
                 }
               />

@@ -12,11 +12,17 @@ class ApiClient {
       // storage restriction fallback
     }
 
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
     const headers = {
-      'Content-Type': 'application/json',
+      ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     };
+
+    if (isFormData) {
+      delete headers['Content-Type'];
+    }
 
     try {
       const response = await fetch(url, {
@@ -29,13 +35,14 @@ class ApiClient {
       if (!response.ok) {
         const error = new Error(data.message || `HTTP Error ${response.status}`);
         error.status = response.status;
+        error.response = { data, status: response.status };
         error.data = data;
         throw error;
       }
 
       return data;
     } catch (err) {
-      if (!err.status) {
+      if (!err.status && !err.response) {
         err.message = err.message || 'Network connection failed';
       }
       throw err;
@@ -47,26 +54,29 @@ class ApiClient {
   }
 
   post(endpoint, body, options = {}) {
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
     return this.request(endpoint, {
       ...options,
       method: 'POST',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isFormData ? body : (body !== undefined ? JSON.stringify(body) : undefined),
     });
   }
 
   put(endpoint, body, options = {}) {
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
     return this.request(endpoint, {
       ...options,
       method: 'PUT',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isFormData ? body : (body !== undefined ? JSON.stringify(body) : undefined),
     });
   }
 
   patch(endpoint, body, options = {}) {
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
     return this.request(endpoint, {
       ...options,
       method: 'PATCH',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isFormData ? body : (body !== undefined ? JSON.stringify(body) : undefined),
     });
   }
 
