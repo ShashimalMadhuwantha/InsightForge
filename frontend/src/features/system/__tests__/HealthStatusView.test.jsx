@@ -57,11 +57,12 @@ describe('HealthStatusView Component', () => {
 
     render(<HealthStatusView />);
 
+    const refreshBtn = await screen.findByTestId('refresh-btn');
     await waitFor(() => {
+      expect(refreshBtn).not.toBeDisabled();
       expect(getSpy).toHaveBeenCalledTimes(1);
     });
 
-    const refreshBtn = screen.getByTestId('refresh-btn');
     fireEvent.click(refreshBtn);
 
     await waitFor(() => {
