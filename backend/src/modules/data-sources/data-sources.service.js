@@ -221,7 +221,12 @@ class DataSourcesService {
     const fileSizeMb = parseFloat((file.size / (1024 * 1024)).toFixed(2));
     await entitlementService.assertLimit(tenantId, 'file_size_mb', fileSizeMb);
 
-    const newVersionNumber = (ds.current_version || 1) + 1;
+    const latestVerRecord = await db('data_source_versions')
+      .where({ data_source_id: id })
+      .max('version_number as max_version')
+      .first();
+    const maxVer = latestVerRecord?.max_version ? parseInt(latestVerRecord.max_version, 10) : (ds.current_version || 1);
+    const newVersionNumber = maxVer + 1;
     const uploadDir = this.getTenantUploadDir(tenantId);
     const storedFilename = `${id}_v${newVersionNumber}_${Date.now()}.${ext}`;
     const targetFilePath = path.join(uploadDir, storedFilename);

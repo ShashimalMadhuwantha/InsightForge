@@ -175,7 +175,12 @@ class CleansingService {
 
     // 4. Save Transformed Dataset to Disk
     const uploadDir = this.getTenantUploadDir(tenantId);
-    const newVersionNumber = (ds.current_version || 1) + 1;
+    const latestVerRecord = await db('data_source_versions')
+      .where({ data_source_id: dataSourceId })
+      .max('version_number as max_version')
+      .first();
+    const maxVer = latestVerRecord?.max_version ? parseInt(latestVerRecord.max_version, 10) : (ds.current_version || 1);
+    const newVersionNumber = maxVer + 1;
     const newFileName = `${dataSourceId}_v${newVersionNumber}_${Date.now()}.json`;
     const targetFilePath = path.join(uploadDir, newFileName);
 
