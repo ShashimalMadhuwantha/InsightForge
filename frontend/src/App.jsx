@@ -13,6 +13,8 @@ import { DataSourcesListPage } from './features/data-sources/DataSourcesListPage
 import { DataSourceUploadPage } from './features/data-sources/DataSourceUploadPage';
 import { DataStatusView } from './features/data-sources/DataStatusView';
 import { CleansingStudioPage } from './features/cleansing/CleansingStudioPage';
+import { WidgetsListPage } from './features/widgets/WidgetsListPage';
+import { ChartBuilderPage } from './features/widgets/ChartBuilderPage';
 import { SuperAdminLayout } from './features/admin/SuperAdminLayout';
 import { TenantDetailsPage } from './features/admin/TenantDetailsPage';
 import { AdminRoute } from './components/AdminRoute';
@@ -124,6 +126,30 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <CleansingStudioPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/widgets"
+                element={
+                  <ProtectedRoute>
+                    <WidgetsListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/widgets/new"
+                element={
+                  <ProtectedRoute>
+                    <ChartBuilderPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/widgets/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <ChartBuilderPage />
                   </ProtectedRoute>
                 }
               />

@@ -84,6 +84,19 @@ export function Navbar() {
                 <span>Data Sources</span>
               </Link>
               <Link
+                to="/widgets"
+                data-testid="widgets-nav-link"
+                className={`btn ${pathname.startsWith('/widgets') ? 'btn-primary' : 'btn-ghost'}`}
+                style={{
+                  padding: '0.45rem 0.85rem',
+                  fontSize: '0.825rem',
+                  gap: '0.4rem',
+                }}
+              >
+                <BarChart3 size={15} color={pathname.startsWith('/widgets') ? 'currentColor' : 'var(--accent-primary)'} />
+                <span>Widgets</span>
+              </Link>
+              <Link
                 to="/packages"
                 data-testid="packages-nav-link"
                 className={`btn ${pathname === '/packages' || pathname === '/pricing' ? 'btn-primary' : 'btn-ghost'}`}
