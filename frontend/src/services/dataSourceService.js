@@ -4,7 +4,7 @@ export const dataSourceService = {
   /**
    * Upload and ingest new dataset (multipart/form-data)
    */
-  async uploadDataSource(file, name = '', onUploadProgress = null) {
+  async uploadDataSource(file, name = '', _onUploadProgress = null) {
     const formData = new FormData();
     formData.append('file', file);
     if (name) {

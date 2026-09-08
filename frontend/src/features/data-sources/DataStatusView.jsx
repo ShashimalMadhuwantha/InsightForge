@@ -16,9 +16,12 @@ import {
   Hash,
   Type,
   ToggleLeft,
-  Trash2
+  Trash2,
+  Wand2,
+  RotateCcw
 } from 'lucide-react';
 import { dataSourceService } from '../../services/dataSourceService';
+import { cleansingService } from '../../services/cleansingService';
 
 export function DataStatusView() {
   const { id } = useParams();
@@ -100,6 +103,20 @@ export function DataStatusView() {
       navigate('/data-sources');
     } catch (err) {
       setErrorMessage(err.message || 'Failed to delete dataset.');
+    }
+  };
+
+  const handleRevertVersion = async (versionNumber) => {
+    if (!window.confirm(`Are you sure you want to revert to Version ${versionNumber}? Active schema and quality metrics will be updated.`)) return;
+    try {
+      setLoading(true);
+      await cleansingService.revertVersion(id, versionNumber);
+      setSuccessMessage(`Successfully reverted dataset to Version ${versionNumber}`);
+      await fetchDataSource();
+    } catch (err) {
+      setErrorMessage(err.message || `Failed to revert to Version ${versionNumber}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -185,6 +202,15 @@ export function DataStatusView() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Link
+            to={`/data-sources/${id}/cleanse`}
+            className="btn btn-primary"
+            data-testid="cleanse-dataset-btn"
+          >
+            <Wand2 size={15} />
+            <span>Cleanse Data</span>
+          </Link>
+
           <button
             onClick={() => refreshFileInputRef.current?.click()}
             disabled={refreshing}
@@ -457,22 +483,69 @@ export function DataStatusView() {
               <thead>
                 <tr>
                   <th>Version</th>
+                  <th>Status</th>
+                  <th>Transformation Recipe</th>
                   <th>File Size</th>
                   <th>Row Count</th>
-                  <th>Uploaded At</th>
+                  <th>Created At</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {(dataSource?.versions || []).map((v) => (
-                  <tr key={v.id}>
-                    <td>
-                      <span className="status-pill info">Version {v.version_number}</span>
-                    </td>
-                    <td className="tabular-nums">{(v.file_size_bytes / (1024 * 1024)).toFixed(2)} MB</td>
-                    <td className="tabular-nums">{(v.row_count || (v.version_number === dataSource?.current_version ? dataSource?.row_count : 0))?.toLocaleString() || 0} rows</td>
-                    <td className="tabular-nums">{new Date(v.created_at).toLocaleString()}</td>
-                  </tr>
-                ))}
+                {(dataSource?.versions || []).map((v) => {
+                  const isCurrent = v.version_number === dataSource?.current_version;
+                  const recipeOps = v.transformation_recipe || [];
+
+                  return (
+                    <tr key={v.id}>
+                      <td>
+                        <strong className="font-mono" style={{ color: 'var(--text-primary)' }}>
+                          Version {v.version_number}
+                        </strong>
+                      </td>
+                      <td>
+                        <span className={`status-pill ${isCurrent ? 'active' : 'info'}`} style={{ fontSize: '0.7rem' }}>
+                          {isCurrent && <span className="live-dot live-dot-success pulse" />}
+                          {isCurrent ? 'Active Version' : 'Historical'}
+                        </span>
+                      </td>
+                      <td>
+                        {recipeOps.length === 0 ? (
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Raw Ingested Dataset</span>
+                        ) : (
+                          <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                            {recipeOps.map((op, opIdx) => (
+                              <span
+                                key={opIdx}
+                                className="status-pill active"
+                                style={{ fontSize: '0.675rem', textTransform: 'uppercase' }}
+                              >
+                                {op.type || op.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </td>
+                      <td className="tabular-nums">{(v.file_size_bytes / (1024 * 1024)).toFixed(2)} MB</td>
+                      <td className="tabular-nums">{(v.row_count || (isCurrent ? dataSource?.row_count : 0))?.toLocaleString() || 0} rows</td>
+                      <td className="tabular-nums" style={{ fontSize: '0.8rem' }}>{new Date(v.created_at).toLocaleString()}</td>
+                      <td style={{ textAlign: 'right' }}>
+                        {!isCurrent && (
+                          <button
+                            type="button"
+                            onClick={() => handleRevertVersion(v.version_number)}
+                            className="btn btn-outline"
+                            data-testid={`revert-btn-v${v.version_number}`}
+                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
+                          >
+                            <RotateCcw size={12} />
+                            <span>Revert to v{v.version_number}</span>
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
