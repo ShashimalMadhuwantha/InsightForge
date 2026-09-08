@@ -78,4 +78,9 @@ router.delete(
   dataSourcesController.deleteDataSource
 );
 
+// 8. Data Cleansing & Version History Sub-routes (Epic 5)
+const cleansingRoutes = require('../cleansing/cleansing.routes');
+router.use('/', cleansingRoutes);
+
 module.exports = router;
+

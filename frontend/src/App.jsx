@@ -12,6 +12,7 @@ import { PackageSelectionPage } from './features/packages/PackageSelectionPage';
 import { DataSourcesListPage } from './features/data-sources/DataSourcesListPage';
 import { DataSourceUploadPage } from './features/data-sources/DataSourceUploadPage';
 import { DataStatusView } from './features/data-sources/DataStatusView';
+import { CleansingStudioPage } from './features/cleansing/CleansingStudioPage';
 import { SuperAdminLayout } from './features/admin/SuperAdminLayout';
 import { TenantDetailsPage } from './features/admin/TenantDetailsPage';
 import { AdminRoute } from './components/AdminRoute';
@@ -115,6 +116,14 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <DataStatusView />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-sources/:id/cleanse"
+                element={
+                  <ProtectedRoute>
+                    <CleansingStudioPage />
                   </ProtectedRoute>
                 }
               />
