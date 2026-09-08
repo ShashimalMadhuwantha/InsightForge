@@ -60,7 +60,7 @@ export function HealthStatusView() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fff'
+              color: 'var(--text-inverse)'
             }}>
               <Activity size={24} />
             </div>

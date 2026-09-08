@@ -7,6 +7,8 @@ const healthRoutes = require('./modules/system/health.routes');
 const authRoutes = require('./modules/auth/auth.routes');
 const tenantsRoutes = require('./modules/tenants/tenants.routes');
 const adminRoutes = require('./modules/admin/admin.routes');
+const packagesRoutes = require('./modules/packages/packages.routes');
+const dataSourcesRoutes = require('./modules/data-sources/data-sources.routes');
 const { notFoundHandler, errorHandler } = require('./common/middlewares/errorHandler');
 
 const app = express();
@@ -29,9 +31,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/', healthRoutes);
 app.use('/api', healthRoutes);
 
-// Auth, Tenant & Admin routes
+// Auth, Tenant, Packages, Data Sources & Admin routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tenants', tenantsRoutes);
+app.use('/api/packages', packagesRoutes);
+app.use('/api/data-sources', dataSourcesRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Base API route ping

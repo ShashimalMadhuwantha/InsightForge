@@ -11,8 +11,11 @@ class AdminService {
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
     const offset = (pageNum - 1) * limitNum;
 
-    // Base query excluding the internal system tenant from client listings if desired, or include all
+    const SYSTEM_TENANT_ID = '00000000-0000-0000-0000-000000000000';
+
+    // Base query excluding internal system administrative tenant
     let query = db('tenants')
+      .whereNot('tenants.id', SYSTEM_TENANT_ID)
       .leftJoin('packages', 'tenants.package_id', 'packages.id')
       .select(
         'tenants.id',
@@ -44,7 +47,7 @@ class AdminService {
     }
 
     // Total count query
-    let countQuery = db('tenants');
+    let countQuery = db('tenants').whereNot('id', SYSTEM_TENANT_ID);
     if (search) {
       countQuery = countQuery.where((builder) => {
         builder.whereILike('name', `%${search}%`)
@@ -241,13 +244,15 @@ class AdminService {
    * Get platform-wide global analytics and health telemetry
    */
   async getGlobalAnalytics() {
+    const SYSTEM_TENANT_ID = '00000000-0000-0000-0000-000000000000';
 
-    const [tenantsCount] = await db('tenants').count('id as total');
-    const [activeTenants] = await db('tenants').where('status', 'active').count('id as total');
-    const [suspendedTenants] = await db('tenants').where('status', 'suspended').count('id as total');
-    const [usersCount] = await db('users').count('id as total');
+    const [tenantsCount] = await db('tenants').whereNot('id', SYSTEM_TENANT_ID).count('id as total');
+    const [activeTenants] = await db('tenants').whereNot('id', SYSTEM_TENANT_ID).where('status', 'active').count('id as total');
+    const [suspendedTenants] = await db('tenants').whereNot('id', SYSTEM_TENANT_ID).where('status', 'suspended').count('id as total');
+    const [usersCount] = await db('users').whereNot('tenant_id', SYSTEM_TENANT_ID).count('id as total');
 
     const tierBreakdown = await db('tenants')
+      .whereNot('tenants.id', SYSTEM_TENANT_ID)
       .leftJoin('packages', 'tenants.package_id', 'packages.id')
       .select(db.raw("COALESCE(packages.name, 'Unassigned') as name"), 'tenants.package_id as id')
       .count('tenants.id as count')

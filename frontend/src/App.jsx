@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider, useAuth } from './features/auth/AuthContext';
@@ -8,16 +8,28 @@ import { SignupPage } from './features/auth/SignupPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { TenantSettingsPage } from './features/tenants/TenantSettingsPage';
+import { PackageSelectionPage } from './features/packages/PackageSelectionPage';
+import { DataSourcesListPage } from './features/data-sources/DataSourcesListPage';
+import { DataSourceUploadPage } from './features/data-sources/DataSourceUploadPage';
+import { DataStatusView } from './features/data-sources/DataStatusView';
+import { CleansingStudioPage } from './features/cleansing/CleansingStudioPage';
 import { SuperAdminLayout } from './features/admin/SuperAdminLayout';
 import { TenantDetailsPage } from './features/admin/TenantDetailsPage';
 import { AdminRoute } from './components/AdminRoute';
 import { HealthStatusView } from './features/system/HealthStatusView';
-import { Sparkles, ArrowRight, ShieldCheck, BarChart3, Zap } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Database, Layers, BarChart3, Zap } from 'lucide-react';
 
 import { ThemeProvider } from './context/ThemeContext';
 
 function DashboardHome() {
   const { user, tenant, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated && user?.role === 'super_admin') {
+      navigate('/admin');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <main style={{ flex: 1, padding: '3.5rem 1rem 2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -83,6 +95,40 @@ export function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/data-sources"
+                element={
+                  <ProtectedRoute>
+                    <DataSourcesListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-sources/upload"
+                element={
+                  <ProtectedRoute>
+                    <DataSourceUploadPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-sources/:id/status"
+                element={
+                  <ProtectedRoute>
+                    <DataStatusView />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-sources/:id/cleanse"
+                element={
+                  <ProtectedRoute>
+                    <CleansingStudioPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/packages" element={<PackageSelectionPage />} />
+              <Route path="/pricing" element={<PackageSelectionPage />} />
               <Route
                 path="/admin"
                 element={
