@@ -67,7 +67,7 @@ InsightForge/
 
 ---
 
-## 🎯 Implementation Progress (Epics 0 — 5)
+## 🎯 Implementation Progress (Epics 0 — 6)
 
 | Epic | Status | Key Deliverables & Features |
 |---|:---:|---|
@@ -77,8 +77,8 @@ InsightForge/
 | **Epic 3: Subscription & Packages** | ✅ Done | Tiered packages (Free Tier, Starter, Growth Business, Enterprise), server-side entitlement assertion, mock Stripe checkout & webhook lifecycle. |
 | **Epic 4: Data Source Management** | ✅ Done | Excel/CSV multipart upload, server-side size/count package gates, BullMQ Redis parsing worker, data quality scoring (completeness, duplicates, missingness). |
 | **Epic 5: Data Cleansing & Outliers** | ✅ Done | Pure functional transformation engine, IQR / Z-Score outlier detection & winsorizing/filtering, dry-run previews, immutable versioning, 1-click historical rollback, Geist-grade Cleansing Studio UI. |
-| **Epic 6: Chart & Widget Builder** | ⏳ Next | Interactive chart configuration studio, aggregation query engine (SUM, AVG, GROUP BY, time buckets), Recharts visualizers, export to PNG/CSV. |
-| **Epic 7: Dashboard Management** | 📋 Planned | Drag-and-drop grid layout (react-grid-layout), global date/filter controls, dashboard sharing & public links. |
+| **Epic 6: Chart & Widget Builder** | ✅ Done | In-memory aggregation query engine (SUM, AVG, COUNT, MIN, MAX, GROUP BY, time buckets, filters, top-N), smart chart suggestion AI, package tier gates, 8 responsive chart types, PNG/SVG/CSV exports, visual studio UI. |
+| **Epic 7: Automated Business Insights** | ⏳ Next | Rule-based insight engine, top/bottom performers, period-over-period changes, background generation, package-gated insight depth. |
 
 ---
 
@@ -88,7 +88,7 @@ InsightForge/
 - **Frontend**: React 18+, Vite, React Router v6, Lucide Icons, Pure CSS Token Design System (Dark/Light mode)
 - **Database**: PostgreSQL 16 (Relational schemas with JSONB audit logs and foreign keys)
 - **Background Processing / Queue**: Redis 7, BullMQ, ioredis
-- **Testing**: Jest, Supertest (Backend — 18 Suites / 109 Tests), Vitest, React Testing Library (Frontend — 15 Suites / 42 Tests)
+- **Testing**: Jest, Supertest (Backend — 20 Suites / 127 Tests), Vitest, React Testing Library (Frontend — 17 Suites / 51 Tests)
 - **Containerization**: Docker, Docker Compose
 
 ---
@@ -235,6 +235,15 @@ cd frontend && npm run lint
 - `POST /api/data-sources/:id/cleanse/apply` — Apply recipe, transform full dataset, and create immutable version
 - `GET  /api/data-sources/:id/cleanse/versions` — List historical version checkpoints & recipes
 - `POST /api/data-sources/:id/versions/:versionNumber/revert` — Instant 1-click rollback to prior version
+
+### Widgets & Visualizations (`/api/widgets`)
+- `GET    /api/widgets` — List tenant widgets with search & type filters
+- `POST   /api/widgets` — Create widget with package entitlement assertion
+- `GET    /api/widgets/:id` — Retrieve widget details and configuration
+- `PUT    /api/widgets/:id` — Update widget title, description, or config
+- `DELETE /api/widgets/:id` — Delete widget
+- `POST   /api/widgets/query` — Execute in-memory aggregation query on dataset version
+- `GET    /api/widgets/suggestions/:dataSourceId` — Smart auto-suggested charts with package lock indicators
 
 ### Packages & Subscriptions (`/api/packages`)
 - `GET  /api/packages` — List available subscription tiers
